@@ -27,7 +27,7 @@ $router->group(['middleware' => 'auth:api', 'prefix' => 'auth'], function ($rout
     $router->post('logout', 'AuthController@logout');
     $router->get('me', 'AuthController@me');
 });
-// $router->group(['prefix' => 'v1'], function ($router) {
+
 $router->group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) {
 
     // user
@@ -44,12 +44,9 @@ $router->group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router
     $router->delete('shared-props/{id:[0-9]+}', 'SharedPropertyController@destroy');
     $router->put('shared-props/batch-update', 'SharedPropertyController@batchUpdate');
     $router->get('shared-props/group/{group}', 'SharedPropertyController@getByGroup');
-    $router->get('shared-props/options/{model}', 'SharedPropertyController@getOptionByModel');
 
-    // tag
-    $router->post('tag', 'TagController@store');
-    $router->put('tag/{id:[0-9]+}', 'TagController@update');
-    $router->delete('tag/{id:[0-9]+}', 'TagController@destroy');
-    $router->get('tag/group/{group}', 'TagController@getByGroup');
-
+    // jamaah
+    $router->get('jamaah/paging', 'JamaahController@paging');
+    $router->get('jamaah', 'JamaahController@getAll');
+    $router->get('jamaah/{id:[0-9]+}', 'JamaahController@findById');
 });

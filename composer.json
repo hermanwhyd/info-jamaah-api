@@ -9,8 +9,10 @@
         "kirkbushell/eloquence": "~8.0",
         "laravel/lumen-framework": "^8.0",
         "laravel/tinker": "^2.5",
-        "spatie/laravel-fractal": "^5.8",
+        "laravelista/lumen-vendor-publish": "8.0",
+        "spatie/laravel-json-api-paginate": "^1.10",
         "spatie/laravel-permission": "^3.18",
+        "spatie/laravel-query-builder": "^3.3",
         "tymon/jwt-auth": "^1.0.2"
     },
     "require-dev": {
@@ -23,7 +25,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Utils/Helpers.php"
+        ]
     },
     "autoload-dev": {
         "classmap": [

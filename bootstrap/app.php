@@ -60,6 +60,8 @@ $app->singleton(
 
 $app->configure('app');
 $app->configure('tinker');
+$app->configure('query-builder');
+$app->configure('json-api-paginate');
 
 /*
 |--------------------------------------------------------------------------
@@ -97,6 +99,8 @@ $app->routeMiddleware([
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
+$app->register(Spatie\QueryBuilder\QueryBuilderServiceProvider::class);
+$app->register(Spatie\JsonApiPaginate\JsonApiPaginateServiceProvider::class);
 
 // spatie permissions
 $app->configure('permission');
@@ -106,8 +110,6 @@ $app->register(Spatie\Permission\PermissionServiceProvider::class);
 $app->register(\Laravel\Tinker\TinkerServiceProvider::class);
 
 $app->register(Eloquence\EloquenceServiceProvider::class);
-
-$app->register(Spatie\Fractal\FractalServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

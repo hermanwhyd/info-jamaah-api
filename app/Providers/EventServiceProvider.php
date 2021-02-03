@@ -11,11 +11,7 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected $listen = [
-        \App\Events\QuestionnaireWasCompleted::class => [
-            \App\Listeners\QuestionnaireSetCompleted::class,
-        ],
-    ];
+    protected $listen = [];
 
     /* events and listeners should be automatically discovered */
     // public function shouldDiscoverEvents() {

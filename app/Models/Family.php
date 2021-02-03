@@ -5,18 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
 
-class Enum extends Model
+class Family extends Model
 {
   use CamelCasing;
 
-  protected $table = 'm_enums';
-
-  /**
-   * Indicates if the model should be timestamped.
-   *
-   * @var bool
-   */
-  public $timestamps = false;
+  const STATUS_ACTIVE = 'A';
+  const STATUS_PISAH_KK = 'P';
 
   /**
    * The attributes that are mass assignable.
@@ -24,7 +18,7 @@ class Enum extends Model
    * @var array
    */
   protected $fillable = [
-    'id', 'group', 'code', 'position', 'label',
+    'id', 'kepalaKeluargaId', 'residanceId'
   ];
 
   /**
@@ -41,12 +35,22 @@ class Enum extends Model
    */
   protected $casts = [
     'id' => 'int',
-    'position' => 'int',
-    'removable' => 'boolean',
+    'kepalaKeluargaId' => 'int',
+    'residanceId' => 'int',
   ];
 
-  public function variables()
+  public function kepalaKeluarga()
   {
-    return $this->morphMany(Variable::class, 'variable');
+    return $this->belongsTo(Jamaah::class, 'kepalaKeluargaId');
+  }
+
+  public function residance()
+  {
+    return $this->belongsTo(Residance::class);
+  }
+
+  public function members()
+  {
+    return $this->hasMany(FamilyMember::class)->orderBy('position');
   }
 }

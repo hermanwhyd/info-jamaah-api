@@ -5,18 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
 
-class Enum extends Model
+class JamaahDetail extends Model
 {
   use CamelCasing;
-
-  protected $table = 'm_enums';
-
-  /**
-   * Indicates if the model should be timestamped.
-   *
-   * @var bool
-   */
-  public $timestamps = false;
 
   /**
    * The attributes that are mass assignable.
@@ -24,7 +15,7 @@ class Enum extends Model
    * @var array
    */
   protected $fillable = [
-    'id', 'group', 'code', 'position', 'label',
+    'jamaahId', 'typeEnum', 'value'
   ];
 
   /**
@@ -41,12 +32,26 @@ class Enum extends Model
    */
   protected $casts = [
     'id' => 'int',
-    'position' => 'int',
-    'removable' => 'boolean',
   ];
 
-  public function variables()
+  /**
+   * The attributes automatically turn into a Carbon object
+   *
+   * @var array
+   */
+  protected $dates = [];
+
+  /**
+   * The attributes eager load
+   *
+   * @var array
+   */
+  protected $with = [
+    'type'
+  ];
+
+  public function type()
   {
-    return $this->morphMany(Variable::class, 'variable');
+    return $this->belongsTo(Enum::class, 'type_enum', 'code')->whereGroup('JAMAAH_DETAIL');
   }
 }

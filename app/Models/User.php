@@ -21,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'id', 'nip', 'jamaah_id', 'mobile', 'email', 'password',
+        'id', 'nip', 'jamaahId', 'mobile', 'email', 'password',
     ];
 
     /**
@@ -44,9 +44,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'deleted_at',
     ];
 
-    protected $include = [
-        'jamaah',
-    ];
+    protected $include = [];
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

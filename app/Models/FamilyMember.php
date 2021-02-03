@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
 
-class Enum extends Model
+class FamilyMember extends Model
 {
   use CamelCasing;
-
-  protected $table = 'm_enums';
 
   /**
    * Indicates if the model should be timestamped.
@@ -24,7 +22,7 @@ class Enum extends Model
    * @var array
    */
   protected $fillable = [
-    'id', 'group', 'code', 'position', 'label',
+    'id', 'familyId', 'relationshipEnum', 'status', 'position'
   ];
 
   /**
@@ -41,12 +39,22 @@ class Enum extends Model
    */
   protected $casts = [
     'id' => 'int',
+    'familyId' => 'int',
     'position' => 'int',
-    'removable' => 'boolean',
   ];
 
-  public function variables()
+  public function jamaah()
   {
-    return $this->morphMany(Variable::class, 'variable');
+    return $this->belongsTo(Jamaah::class);
+  }
+
+  public function family()
+  {
+    return $this->belongsTo(Family::class);
+  }
+
+  public function relationship()
+  {
+    return $this->belongsTo(Enum::class, 'relationship_enum', 'code')->whereGroup('FAMS_RELATIONSHIP');
   }
 }

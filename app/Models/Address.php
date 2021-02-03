@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
 
-class Enum extends Model
+class Address extends Model
 {
   use CamelCasing;
-
-  protected $table = 'm_enums';
 
   /**
    * Indicates if the model should be timestamped.
@@ -24,7 +22,7 @@ class Enum extends Model
    * @var array
    */
   protected $fillable = [
-    'id', 'group', 'code', 'position', 'label',
+    'id', 'addressable_type', 'addressable_id', 'streetName', 'houseNo', 'rt', 'rw', 'kelurahan', 'kecamatan', 'city', 'postCode', 'geo'
   ];
 
   /**
@@ -41,12 +39,12 @@ class Enum extends Model
    */
   protected $casts = [
     'id' => 'int',
-    'position' => 'int',
-    'removable' => 'boolean',
+    'addressable_id' => 'int',
+    'postCode' => 'int',
   ];
 
-  public function variables()
+  public function addressable()
   {
-    return $this->morphMany(Variable::class, 'variable');
+    return $this->morphTo();
   }
 }
