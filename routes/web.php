@@ -49,4 +49,6 @@ $router->group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router
     $router->get('jamaah/paging', 'JamaahController@paging');
     $router->get('jamaah', 'JamaahController@getAll');
     $router->get('jamaah/{id:[0-9]+}', 'JamaahController@findById');
+    $router->post('jamaah', 'JamaahController@store');
+    $router->put('jamaah/{id:[0-9]+}/photo', 'JamaahController@updatePhoto');
 });
