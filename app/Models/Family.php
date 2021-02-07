@@ -7,50 +7,50 @@ use \Eloquence\Behaviours\CamelCasing;
 
 class Family extends Model
 {
-  use CamelCasing;
+    use CamelCasing;
 
-  const STATUS_ACTIVE = 'A';
-  const STATUS_PISAH_KK = 'P';
+    const STATUS_ACTIVE = 'A';
+    const STATUS_PISAH_KK = 'P';
 
-  /**
-   * The attributes that are mass assignable.
-   *
-   * @var array
-   */
-  protected $fillable = [
-    'id', 'kepalaKeluargaId', 'residanceId'
-  ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'id', 'kepalaKeluargaId', 'residanceId', 'label'
+    ];
 
-  /**
-   * The attributes excluded from the model's JSON form.
-   *
-   * @var array
-   */
-  protected $hidden = [];
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    protected $hidden = [];
 
-  /**
-   * The attributes cast to specific type
-   *
-   * @var array
-   */
-  protected $casts = [
-    'id' => 'int',
-    'kepalaKeluargaId' => 'int',
-    'residanceId' => 'int',
-  ];
+    /**
+     * The attributes cast to specific type
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id' => 'int',
+        'kepalaKeluargaId' => 'int',
+        'residanceId' => 'int',
+    ];
 
-  public function kepalaKeluarga()
-  {
-    return $this->belongsTo(Jamaah::class, 'kepalaKeluargaId');
-  }
+    public function kepalaKeluarga()
+    {
+        return $this->belongsTo(Jamaah::class, 'kepalaKeluargaId');
+    }
 
-  public function residance()
-  {
-    return $this->belongsTo(Residance::class);
-  }
+    public function residance()
+    {
+        return $this->belongsTo(Residance::class);
+    }
 
-  public function members()
-  {
-    return $this->hasMany(FamilyMember::class)->orderBy('position');
-  }
+    public function members()
+    {
+        return $this->hasMany(FamilyMember::class)->orderBy('position');
+    }
 }

@@ -5,80 +5,91 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Plank\Mediable\Mediable;
 
 class Jamaah extends Model
 {
-  use CamelCasing, SoftDeletes;
+    use CamelCasing, SoftDeletes, Mediable;
 
-  /**
-   * The attributes that are mass assignable.
-   *
-   * @var array
-   */
-  protected $fillable = [
-    'fullNama', 'nickName', 'birthDate'
-  ];
+    const MEDIA_TAG_CLOSEUP = 'closeup';
+    const MEDIA_TAG_THUMB = 'thumb';
 
-  /**
-   * The attributes excluded from the model's JSON form.
-   *
-   * @var array
-   */
-  protected $hidden = [];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'fullNama', 'nickName', 'birthDate', 'lvPembinaanEnum'
+    ];
 
-  /**
-   * The attributes cast to specific type
-   *
-   * @var array
-   */
-  protected $casts = [
-    'id' => 'int',
-  ];
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    protected $hidden = [];
 
-  /**
-   * The attributes automatically turn into a Carbon object
-   *
-   * @var array
-   */
-  protected $dates = [
-    'birthDate',
-    'createdAt',
-    'updatedAt',
-    'deletedAt',
-  ];
+    /**
+     * The attributes cast to specific type
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id' => 'int',
+    ];
 
-  public function contacts()
-  {
-    return $this->morphMany(Contact::class, 'contactable');
-  }
+    /**
+     * The attributes automatically turn into a Carbon object
+     *
+     * @var array
+     */
+    protected $dates = [
+        'birthDate',
+        'createdAt',
+        'updatedAt',
+        'deletedAt',
+    ];
 
-  public function family()
-  {
-    return $this->belongsToMany(Family::class, 'family_members')->whereStatus(Family::STATUS_ACTIVE)->latest();
-  }
+    protected $with = [];
 
-  public function families()
-  {
-    return $this->belongsToMany(Family::class, 'family_members')->latest();
-  }
+    public function contacts()
+    {
+        return $this->morphMany(Contact::class, 'contactable');
+    }
 
-  public function details()
-  {
-    return $this->hasMany(JamaahDetail::class);
-  }
+    public function family()
+    {
+        return $this->belongsToMany(Family::class, 'family_members')->whereStatus(Family::STATUS_ACTIVE)->latest();
+    }
 
-  public function pembina()
-  {
-    return $this->belongsTo(Enum::class, 'pembina_enum', 'code')->where('group', 'like', 'PEMBINA_%');
-  }
+    public function families()
+    {
+        return $this->belongsToMany(Family::class, 'family_members')->latest();
+    }
 
-  public function pembinaan()
-  {
-    return $this->hasOne(JamaahPembinaan::class)->active();
-  }
+    public function details()
+    {
+        return $this->hasMany(JamaahDetail::class);
+    }
 
-  public function pembinaanHistories()
-  {
-    return $this->hasMany(JamaahPembinaan::class)->orderBy('id');
-  }
+    public function pembina()
+    {
+        return $this->belongsTo(Enum::class, 'pembina_enum', 'code')->where('group', 'like', 'PEMBINA_%');
+    }
+
+    public function lvPembinaan()
+    {
+        return $this->belongsTo(Enum::class, 'lv_pembinaan_enum', 'code')->where('group', 'LV_PEMBINAAN');
+    }
+
+    public function pembinaan()
+    {
+        return $this->hasOne(JamaahPembinaan::class)->active();
+    }
+
+    public function pembinaanHistories()
+    {
+        return $this->hasMany(JamaahPembinaan::class)->orderBy('id');
+    }
 }

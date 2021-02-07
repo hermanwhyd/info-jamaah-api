@@ -24,7 +24,7 @@ return [
      * Uploader will throw an exception if a disk not in this list is selected
      */
     'allowed_disks' => [
-        'public',
+        'public', 's3'
     ],
 
     /*
@@ -178,17 +178,17 @@ return [
         ],
         Plank\Mediable\Media::TYPE_PRESENTATION => [
             'mime_types' =>
-                [
-                    'application/vnd.ms-powerpoint',
-                    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                    'application/vnd.openxmlformats-officedocument.presentationml.slideshow'
-                ],
+            [
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'application/vnd.openxmlformats-officedocument.presentationml.slideshow'
+            ],
             'extensions' =>
-                [
-                    'ppt',
-                    'pptx',
-                    'ppsx',
-                ]
+            [
+                'ppt',
+                'pptx',
+                'ppsx',
+            ]
         ],
     ],
 

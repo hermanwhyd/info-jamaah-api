@@ -47,6 +47,7 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+
 /*
 |--------------------------------------------------------------------------
 | Register Config Files
@@ -62,6 +63,12 @@ $app->configure('app');
 $app->configure('tinker');
 $app->configure('query-builder');
 $app->configure('json-api-paginate');
+$app->configure('filesystems');
+$app->configure('permission');
+$app->configure('mediable');
+$app->configure('jwt');
+$app->configure('auth');
+$app->configure('database');
 
 /*
 |--------------------------------------------------------------------------
@@ -95,21 +102,21 @@ $app->routeMiddleware([
 |
  */
 
-// $app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Spatie\QueryBuilder\QueryBuilderServiceProvider::class);
 $app->register(Spatie\JsonApiPaginate\JsonApiPaginateServiceProvider::class);
-
-// spatie permissions
-$app->configure('permission');
-$app->alias('cache', \Illuminate\Cache\CacheManager::class);
 $app->register(Spatie\Permission\PermissionServiceProvider::class);
-
 $app->register(\Laravel\Tinker\TinkerServiceProvider::class);
-
 $app->register(Eloquence\EloquenceServiceProvider::class);
+$app->register(Plank\Mediable\MediableServiceProvider::class);
+$app->register(Intervention\Image\ImageServiceProvider::class);
+
+$app->alias('cache', \Illuminate\Cache\CacheManager::class);
+$app->alias('MediaUploader', Plank\Mediable\MediaUploaderFacade::class);
+$app->alias('image', Intervention\Image\Facades\Image::class);
 
 /*
 |--------------------------------------------------------------------------

@@ -7,6 +7,10 @@ use App\Models\Jamaah;
 use App\Repositories\JamaahRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Plank\Mediable\MediaUploader;
+use Intervention\Image\Facades\Image;
+use Plank\Mediable\Facades\ImageManipulator;
+use Plank\Mediable\Jobs\CreateImageVariants;
 
 class JamaahController extends Controller
 {
@@ -63,26 +67,49 @@ class JamaahController extends Controller
         return $this->successRs($data);
     }
 
-    public function updatePhoto(Request $request, $id)
+    public function updatePhoto(Request $request, $id, MediaUploader $mediaUploader)
     {
+        $validator = Validator::make($request->all(), [
+            'photo' => 'required|file|image',
+        ]);
 
-        // return $request;
-
-        // $validator = Validator::make($request->all(), [
-        //     'photo' => 'required|image'
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
-        // }
-
-        $jamaah = Jamaah::findOrFail($id);
-
-        // Replace media
-        if ($request->filled('photo')) {
-            $jamaah->addMediaFromUrl('https://pbs.twimg.com/profile_images/497717313072689153/PL0JEaGm_400x400.jpeg')->toMediaCollection();
+        if ($validator->fails()) {
+            return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
         }
 
-        return $this->successRs($jamaah->getFirstMediaUrl());
+        $file = $request->file('photo');
+        $folder = 'media/temp/';
+        $uniqid = uniqid();
+        $mainFileName = $id . '_' . $uniqid . '.' . $file->getClientOriginalExtension();
+
+        $jamaah = Jamaah::withMediaAndVariants(Jamaah::MEDIA_TAG_CLOSEUP)->findOrFail($id);
+
+        // Making photo intervention
+        Image::make($file)
+            ->resize(720, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            })
+            ->save(public_path($folder) . $mainFileName);
+
+        // Making mediable
+        $newMedia = $mediaUploader->fromSource(public_path($folder . $mainFileName))->toDirectory('/profile')->upload();
+        ImageManipulator::createImageVariant($newMedia, Jamaah::MEDIA_TAG_THUMB, true);
+
+        // Delete old then add new one
+        $oldMedia = $jamaah->firstMedia(Jamaah::MEDIA_TAG_CLOSEUP);
+        if ($oldMedia) {
+            foreach ($oldMedia->getAllVariants() as $key => $media) {
+                $media->delete();
+            }
+            $oldMedia->delete();
+        }
+
+        $jamaah->attachMedia($newMedia, [Jamaah::MEDIA_TAG_CLOSEUP]);
+
+        // Delete tmp file
+        unlink(public_path($folder) . $mainFileName);
+
+        return $this->successRs($jamaah->firstMedia([Jamaah::MEDIA_TAG_CLOSEUP]));
     }
 }
