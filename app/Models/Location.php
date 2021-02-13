@@ -4,10 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
+use Plank\Mediable\Mediable;
 
-class JamaahDetail extends Model
+class Location extends Model
 {
-    use CamelCasing;
+    use CamelCasing, Mediable;
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -15,7 +23,7 @@ class JamaahDetail extends Model
      * @var array
      */
     protected $fillable = [
-        'jamaahId', 'typeEnum', 'value'
+        'typeEnum', 'label'
     ];
 
     /**
@@ -32,7 +40,6 @@ class JamaahDetail extends Model
      */
     protected $casts = [
         'id' => 'int',
-        'jamaahId' => 'int',
     ];
 
     /**
@@ -42,17 +49,10 @@ class JamaahDetail extends Model
      */
     protected $dates = [];
 
-    /**
-     * The attributes eager load
-     *
-     * @var array
-     */
-    protected $with = [
-        'type'
-    ];
+    protected $with = [];
 
     public function type()
     {
-        return $this->belongsTo(Enum::class, 'type_enum', 'code')->whereGroup('JAMAAH_DETAIL');
+        return $this->belongsTo(Enum::class, 'type_enum', 'code')->where('group', 'LOCATION_TYPE');
     }
 }

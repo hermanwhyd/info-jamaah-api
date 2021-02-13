@@ -2,39 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\JamaahResource;
-use App\Models\Jamaah;
-use App\Repositories\JamaahRepository;
+use App\Http\Resources\AssetResource;
+use App\Models\Asset;
+use App\Repositories\AssetRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Plank\Mediable\MediaUploader;
 use Intervention\Image\Facades\Image;
 use Plank\Mediable\Facades\ImageManipulator;
 
-class JamaahController extends Controller
+class AssetController extends Controller
 {
 
-    protected $jamaahRepo;
+    protected $assetRepo;
 
-    public function __construct(JamaahRepository $jamaahRepo)
+    public function __construct(AssetRepository $assetRepo)
     {
-        $this->jamaahRepo = $jamaahRepo;
+        $this->assetRepo = $assetRepo;
     }
 
     public function paging()
     {
-        return JamaahResource::collection($this->jamaahRepo->queryBuilder()->jsonPaginate());
+        return AssetResource::collection($this->assetRepo->queryBuilder()->jsonPaginate());
     }
 
     public function getAll()
     {
-        $data = JamaahResource::collection($this->jamaahRepo->queryBuilder()->get());
+        $data = AssetResource::collection($this->assetRepo->queryBuilder()->get());
         return $this->successRs($data);
     }
 
     public function findById($id)
     {
-        $data = new JamaahResource($this->jamaahRepo->queryBuilder()->whereId($id)->first());
+        $data = new AssetResource($this->assetRepo->queryBuilder()->whereId($id)->first());
         return $this->successRs($data);
     }
 
@@ -52,17 +52,17 @@ class JamaahController extends Controller
             return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
         }
 
-        $jamaah = new Jamaah($validator->validated());
+        $asset = new Asset($validator->validated());
 
         // Add media
         if ($request->filled('photo')) {
-            $jamaah->addMediaFromRequest('photo')->toMediaCollection();
+            $asset->addMediaFromRequest('photo')->toMediaCollection();
         }
 
         // Load missing relationship
-        // $jamaah->loadMissing(['']);
+        // $asset->loadMissing(['']);
 
-        $data = new JamaahResource($jamaah);
+        $data = new AssetResource($asset);
         return $this->successRs($data);
     }
 
@@ -81,7 +81,7 @@ class JamaahController extends Controller
         $uniqid = uniqid();
         $mainFileName = $id . '_' . $uniqid . '.' . $file->getClientOriginalExtension();
 
-        $jamaah = Jamaah::withMediaAndVariants(Jamaah::MEDIA_TAG_CLOSEUP)->findOrFail($id);
+        $asset = Asset::withMediaAndVariants(Asset::MEDIA_TAG_CLOSEUP)->findOrFail($id);
 
         // Making photo intervention
         Image::make($file)
@@ -93,10 +93,10 @@ class JamaahController extends Controller
 
         // Making mediable
         $newMedia = $mediaUploader->fromSource(public_path($folder . $mainFileName))->toDirectory('/profile')->upload();
-        ImageManipulator::createImageVariant($newMedia, Jamaah::MEDIA_TAG_THUMB, true);
+        ImageManipulator::createImageVariant($newMedia, Asset::MEDIA_TAG_THUMB, true);
 
         // Delete old then add new one
-        $oldMedia = $jamaah->firstMedia(Jamaah::MEDIA_TAG_CLOSEUP);
+        $oldMedia = $asset->firstMedia(Asset::MEDIA_TAG_CLOSEUP);
         if ($oldMedia) {
             foreach ($oldMedia->getAllVariants() as $key => $media) {
                 $media->delete();
@@ -104,11 +104,11 @@ class JamaahController extends Controller
             $oldMedia->delete();
         }
 
-        $jamaah->attachMedia($newMedia, [Jamaah::MEDIA_TAG_CLOSEUP]);
+        $asset->attachMedia($newMedia, [Asset::MEDIA_TAG_CLOSEUP]);
 
         // Delete tmp file
         unlink(public_path($folder) . $mainFileName);
 
-        return $this->successRs($jamaah->firstMedia([Jamaah::MEDIA_TAG_CLOSEUP]));
+        return $this->successRs($asset->firstMedia([Asset::MEDIA_TAG_CLOSEUP]));
     }
 }

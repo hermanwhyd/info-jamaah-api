@@ -20,7 +20,7 @@ class Jamaah extends Model
      * @var array
      */
     protected $fillable = [
-        'fullNama', 'nickName', 'birthDate', 'lvPembinaanEnum'
+        'fullName', 'nickName', 'birthDate', 'lvPembinaanEnum'
     ];
 
     /**

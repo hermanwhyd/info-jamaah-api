@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
 
-class JamaahDetail extends Model
+class AssetDetail extends Model
 {
     use CamelCasing;
 
@@ -15,7 +15,7 @@ class JamaahDetail extends Model
      * @var array
      */
     protected $fillable = [
-        'jamaahId', 'typeEnum', 'value'
+        'assetId', 'typeEnum', 'value'
     ];
 
     /**
@@ -32,7 +32,7 @@ class JamaahDetail extends Model
      */
     protected $casts = [
         'id' => 'int',
-        'jamaahId' => 'int',
+        'assetId' => 'int',
     ];
 
     /**
@@ -53,6 +53,6 @@ class JamaahDetail extends Model
 
     public function type()
     {
-        return $this->belongsTo(Enum::class, 'type_enum', 'code')->whereGroup('JAMAAH_DETAIL');
+        return $this->belongsTo(Enum::class, 'type_enum', 'code')->whereGroup('ASSET_DETAIL');
     }
 }

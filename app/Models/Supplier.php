@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
 
-class JamaahDetail extends Model
+class Supplier extends Model
 {
     use CamelCasing;
 
@@ -15,7 +15,7 @@ class JamaahDetail extends Model
      * @var array
      */
     protected $fillable = [
-        'jamaahId', 'typeEnum', 'value'
+        'title'
     ];
 
     /**
@@ -32,7 +32,6 @@ class JamaahDetail extends Model
      */
     protected $casts = [
         'id' => 'int',
-        'jamaahId' => 'int',
     ];
 
     /**
@@ -40,19 +39,23 @@ class JamaahDetail extends Model
      *
      * @var array
      */
-    protected $dates = [];
-
-    /**
-     * The attributes eager load
-     *
-     * @var array
-     */
-    protected $with = [
-        'type'
+    protected $dates = [
+        'updatedAt',
+        'deletedAt',
     ];
 
-    public function type()
+    public function contacts()
     {
-        return $this->belongsTo(Enum::class, 'type_enum', 'code')->whereGroup('JAMAAH_DETAIL');
+        return $this->morphMany(Contact::class, 'contactable');
+    }
+
+    public function address()
+    {
+        return $this->morphOne(Address::class, 'addressable');
+    }
+
+    public function maintenances()
+    {
+        return $this->hasMany(AssetMaintenance::class);
     }
 }

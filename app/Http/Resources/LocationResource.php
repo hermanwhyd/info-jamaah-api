@@ -3,9 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Str;
 
-class PembinaResource extends JsonResource
+class LocationResource extends JsonResource
 {
 
     public function __construct($resource)
@@ -17,9 +16,10 @@ class PembinaResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'lvPembina' => Str::ucfirst(Str::lower(Str::after($this->group, '_'))),
-            'initial' => $this->code,
-            'label' => $this->label
+            'id' => (int) $this->id,
+            'label' => $this->label,
+            'typeEnum' => $this->typeEnum,
+            'type' => new EnumTypeResource($this->whenLoaded('type')),
         ];
     }
 }

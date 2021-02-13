@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
 
-class JamaahDetail extends Model
+class AssetAudit extends Model
 {
     use CamelCasing;
 
@@ -15,7 +15,7 @@ class JamaahDetail extends Model
      * @var array
      */
     protected $fillable = [
-        'jamaahId', 'typeEnum', 'value'
+        'auditedAt', 'assetId', 'locationId', 'notes', 'nextAuditAt', 'assetStatusEnum'
     ];
 
     /**
@@ -32,7 +32,8 @@ class JamaahDetail extends Model
      */
     protected $casts = [
         'id' => 'int',
-        'jamaahId' => 'int',
+        'assetId' => 'int',
+        'locationId' => 'int',
     ];
 
     /**
@@ -40,19 +41,27 @@ class JamaahDetail extends Model
      *
      * @var array
      */
-    protected $dates = [];
-
-    /**
-     * The attributes eager load
-     *
-     * @var array
-     */
-    protected $with = [
-        'type'
+    protected $dates = [
+        'createdAt',
+        'updatedAt',
+        'nextAuditAt',
+        'auditedAt'
     ];
 
-    public function type()
+    protected $with = [];
+
+    public function assetStatus()
     {
-        return $this->belongsTo(Enum::class, 'type_enum', 'code')->whereGroup('JAMAAH_DETAIL');
+        return $this->belongsTo(Enum::class, 'asset_status_enum', 'code')->where('group', 'ASSET_STATUS');
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
+
+    public function asset()
+    {
+        return $this->belongsTo(Asset::class);
     }
 }

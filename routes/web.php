@@ -51,4 +51,17 @@ $router->group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router
     $router->get('jamaah/{id:[0-9]+}', 'JamaahController@findById');
     $router->post('jamaah', 'JamaahController@store');
     $router->post('jamaah/{id:[0-9]+}/photo', 'JamaahController@updatePhoto');
+
+    // asset sb
+    $router->group(['prefix' => 'asset'], function () use ($router) {
+        $router->get('', 'AssetController@getAll');
+        $router->get('/{id:[0-9]+}', 'AssetController@findById');
+        $router->post('', 'AssetController@store');
+        $router->put('', 'AssetController@update');
+
+        // maintenance
+        // $router->group(['prefix' => 'maintenance', function () use ($router) {
+        //     $router->post('', 'AssetController@storeMaintenance');
+        // }]);
+    });
 });
