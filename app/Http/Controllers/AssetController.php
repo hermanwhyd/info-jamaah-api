@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Resources\AssetResource;
+use App\Http\Resources\MediaResource;
+use App\Models\Asset;
+use App\Repositories\AssetRepository;
+use App\Utils\MediaUtils;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class AssetController extends Controller
+{
+
+    protected $assetRepo;
+
+    public function __construct(AssetRepository $assetRepo)
+    {
+        $this->assetRepo = $assetRepo;
+    }
+
+    public function paging()
+    {
+        return AssetResource::collection($this->assetRepo->queryBuilder()->jsonPaginate());
+    }
+
+    public function getAll()
+    {
+        $data = AssetResource::collection($this->assetRepo->queryBuilder()->get());
+        return $this->successRs($data);
+    }
+
+    public function findById($id)
+    {
+        $data = new AssetResource($this->assetRepo->queryBuilder()->whereId($id)->first());
+        return $this->successRs($data);
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'fullName' => 'required',
+            'nickName' => 'required',
+            'gender' => 'required',
+            'pembinaEnum' => 'required|exists:m_enums,code',
+            'photo' => 'nullable|image'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
+        }
+
+        $asset = new Asset($validator->validated());
+
+        // Add media
+        if ($request->filled('photo')) {
+            $asset->addMediaFromRequest('photo')->toMediaCollection();
+        }
+
+        // Load missing relationship
+        // $asset->loadMissing(['']);
+
+        $data = new AssetResource($asset);
+        return $this->successRs($data);
+    }
+
+    public function upload(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file',
+            'notes' => 'nullable|max:150'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
+        }
+
+        $file = $request->file('file');
+        $collection = MediaUtils::isImage($file->getClientMimeType()) ? Asset::MEDIA_TAG_PHOTO : Asset::MEDIA_TAG_DOCS;
+        $uniqid = uniqid();
+        $fileName = $id . '_' . $collection . '_' . $uniqid . '.' . $file->getClientOriginalExtension();
+        $originalFileName = $file->getClientOriginalName();
+
+        $asset = Asset::findOrFail($id);
+        $media = $asset->addMediaFromRequest('file')
+            ->usingName($originalFileName)
+            ->usingFileName($fileName)
+            ->withCustomProperties(['notes' => $request->input('notes')])
+            ->storingConversionsOnDisk('media')
+            ->toMediaCollection($collection);
+
+        return new MediaResource($media);
+    }
+}
