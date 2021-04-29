@@ -8,10 +8,10 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class AddressRepository
 {
-  public function queryBuilder()
-  {
-    return QueryBuilder::for(Address::class)
-      ->allowedIncludes(['addressable'])
-      ->allowedFilters(['kelurahan', 'kecamatan', AllowedFilter::trashed()]);
-  }
+    public function queryBuilder()
+    {
+        return QueryBuilder::for(Address::class)
+            ->allowedIncludes(['addressable'])
+            ->allowedFilters(['kelurahan', 'kecamatan', AllowedFilter::trashed()]);
+    }
 }

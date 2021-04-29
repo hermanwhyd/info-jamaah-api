@@ -2,39 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\AssetMaintenanceResource;
+use App\Http\Resources\AssetAuditResource;
 use App\Http\Resources\MediaResource;
 use App\Models\Asset;
-use App\Models\AssetMaintenance;
-use App\Repositories\AssetMaintenanceRepository;
+use App\Models\AssetAudit;
+use App\Repositories\AssetAuditRepository;
 use App\Utils\MediaUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class AssetMaintenanceController extends Controller
+class AssetAuditController extends Controller
 {
 
-    protected $assetMntnRepo;
+    private $assetAuditRepo;
 
-    public function __construct(AssetMaintenanceRepository $assetMntnRepo)
+    public function __construct(AssetAuditRepository $assetAuditRepo)
     {
-        $this->assetMntnRepo = $assetMntnRepo;
+        $this->assetAuditRepo = $assetAuditRepo;
     }
 
     public function paging()
     {
-        return AssetMaintenanceResource::collection($this->assetMntnRepo->queryBuilder()->jsonPaginate());
+        return AssetAuditResource::collection($this->assetAuditRepo->queryBuilder()->jsonPaginate());
     }
 
     public function getAll()
     {
-        $data = AssetMaintenanceResource::collection($this->assetMntnRepo->queryBuilder()->get());
+        $data = AssetAuditResource::collection($this->assetAuditRepo->queryBuilder()->get());
         return $this->successRs($data);
     }
 
     public function findById($id)
     {
-        $data = new AssetMaintenanceResource($this->assetMntnRepo->queryBuilder()->whereId($id)->first());
+        $data = new AssetAuditResource($this->assetAuditRepo->queryBuilder()->whereId($id)->first());
         return $this->successRs($data);
     }
 
@@ -42,12 +42,10 @@ class AssetMaintenanceController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'assetId' => 'required|numeric|exists:assets,id',
-            'supplierId' => 'required|exists:suppliers,id',
-            'typeEnum' => 'required|exists:m_enums,code',
-            'title' => 'required',
+            'locationId' => 'required|numeric|exists:locations,id',
+            'assetStatusEnum' => 'required|exists:m_enums,code',
             'notes' => 'nullable|max:150',
-            'startDate' => 'date',
-            'endDate' => 'date',
+            'auditedAt' => 'date',
             'media' => 'nullable|exists:media,id'
         ]);
 
@@ -55,16 +53,16 @@ class AssetMaintenanceController extends Controller
             return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
         }
 
-        $maintenance = AssetMaintenance::create($validator->validated());
+        $audit = AssetAudit::create($validator->validated());
 
         // Add media
         if ($request->filled('media')) {
-            $maintenance->asset->addMedia('media');
+            $audit->asset->addMedia('media');
         }
 
-        $maintenance->loadMissing(['supplier', 'type']);
+        $audit->loadMissing(['location', 'assetStatus']);
 
-        $data = new AssetMaintenanceResource($maintenance);
+        $data = new AssetAuditResource($audit);
         return $this->successRs($data);
     }
 
@@ -72,28 +70,27 @@ class AssetMaintenanceController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'assetId' => 'required|numeric|exists:assets,id',
-            'supplierId' => 'required|exists:suppliers,id',
-            'typeEnum' => 'required|exists:m_enums,code',
-            'title' => 'required',
+            'locationId' => 'required|numeric|exists:locations,id',
+            'assetStatusEnum' => 'required|exists:m_enums,code',
             'notes' => 'nullable|max:150',
-            'startDate' => 'date',
-            'endDate' => 'date',
+            'auditedAt' => 'date',
+            'media' => 'nullable|exists:media,id'
         ]);
 
         if ($validator->fails()) {
             return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
         }
 
-        $maintenance = AssetMaintenance::findOrFail($id);
-        $maintenance->update($validator->validated());
+        $audit = AssetAudit::findOrFail($id);
+        $audit->update($validator->validated());
 
-        $data = new AssetMaintenanceResource($maintenance);
+        $data = new AssetAuditResource($audit);
         return $this->successRs($data);
     }
 
     public function destroy($id)
     {
-        $deletedCount = AssetMaintenance::destroy($id);
+        $deletedCount = AssetAudit::destroy($id);
         return $this->successRs($deletedCount);
     }
 

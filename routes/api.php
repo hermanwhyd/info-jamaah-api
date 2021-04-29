@@ -71,6 +71,16 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
             $router->put('{id}', 'AssetMaintenanceController@update');
             $router->delete('{id}', 'AssetMaintenanceController@destroy');
         });
+
+        // maintenance
+        $router->group(['prefix' => 'audit'], function () use ($router) {
+            $router->get('', 'AssetAuditController@getAll');
+            $router->get('paging', 'AssetAuditController@paging');
+            $router->get('{id}', 'AssetAuditController@findById');
+            $router->post('', 'AssetAuditController@store');
+            $router->put('{id}', 'AssetAuditController@update');
+            $router->delete('{id}', 'AssetAuditController@destroy');
+        });
     });
 
     $router->group(['prefix' => 'media'], function () use ($router) {

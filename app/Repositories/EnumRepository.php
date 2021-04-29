@@ -7,8 +7,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class EnumRepository
 {
-  public function queryBuilder()
-  {
-    return QueryBuilder::for(Enum::class)->allowedIncludes(['variables']);
-  }
+    public function queryBuilder()
+    {
+        return QueryBuilder::for(Enum::class)->allowedIncludes(['variables']);
+    }
 }
