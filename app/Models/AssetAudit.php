@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\UserCreationLogger;
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
 
 class AssetAudit extends Model
 {
-    use CamelCasing;
+    use CamelCasing, UserCreationLogger;
 
     /**
      * The attributes that are mass assignable.
@@ -49,6 +50,11 @@ class AssetAudit extends Model
     ];
 
     protected $with = [];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 
     public function assetStatus()
     {

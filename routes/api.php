@@ -85,5 +85,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
 
     $router->group(['prefix' => 'media'], function () use ($router) {
         $router->get('/{uuid}/download', 'MediaController@downloadSingle')->name('media.download');
+        $router->put('/{uuid}', 'MediaController@update');
+        $router->delete('/{uuid}', 'MediaController@destroy');
     });
 });

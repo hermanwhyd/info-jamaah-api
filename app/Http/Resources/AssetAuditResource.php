@@ -26,6 +26,7 @@ class AssetAuditResource extends JsonResource
             'assetStatus' => new EnumTypeResource($this->whenLoaded('assetStatus')),
             'asset' => new AssetResource($this->whenLoaded('asset')),
             'location' => new LocationResource($this->whenLoaded('location')),
+            'creator' => new UserResource($this->whenLoaded('creator')),
         ];
     }
 }

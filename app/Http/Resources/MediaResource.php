@@ -23,6 +23,7 @@ class MediaResource extends JsonResource
             'id' => (int) $this->id,
             'uuid' => $this->uuid,
             'name' => $this->name,
+            'collectionName' => $this->collectionName,
             'collection' => new EnumTypeResource($this->collection),
             'mimeType' => $this->mime_type,
             'size' => (int) $this->size,
@@ -33,7 +34,8 @@ class MediaResource extends JsonResource
                 'download' => route('media.download', ['uuid' => $this->uuid])
             ],
             'properties' => $this->custom_properties,
-            'createdAt' => DateUtils::toIso8601String($this->created_at)
+            'createdAt' => DateUtils::toIso8601String($this->created_at),
+            'updatedAt' => DateUtils::toIso8601String($this->updated_at),
         ];
     }
 }
