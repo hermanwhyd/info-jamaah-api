@@ -25,7 +25,7 @@ class SharedPropertyController extends Controller
      */
     public function getByGroup($group)
     {
-        return $this->successRs(EnumTypeResource::collection($this->enumRepo->queryBuilder()->whereGroup($group)->get()));
+        return $this->successRs(EnumTypeResource::collection($this->enumRepo->queryBuilder()->whereGroup($group)->orderBy('position')->get()));
     }
 
     /**
