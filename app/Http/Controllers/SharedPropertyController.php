@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EnumResource;
 use App\Http\Resources\EnumTypeResource;
 use App\Models\Enum;
 use App\Repositories\EnumRepository;
@@ -23,8 +24,11 @@ class SharedPropertyController extends Controller
     /**
      * Get all shared property within group
      */
-    public function getByGroup($group)
+    public function getByGroup(Request $request, $group)
     {
+        if ($request->has('full-data'))
+            return $this->successRs(EnumResource::collection($this->enumRepo->queryBuilder()->whereGroup($group)->orderBy('position')->get()));
+
         return $this->successRs(EnumTypeResource::collection($this->enumRepo->queryBuilder()->whereGroup($group)->orderBy('position')->get()));
     }
 
@@ -65,7 +69,7 @@ class SharedPropertyController extends Controller
 
         $model = Enum::create($validator->validated());
 
-        return $this->successRs(new EnumTypeResource($model));
+        return $this->successRs(new EnumResource($model));
     }
 
     public function update(Request $request, $id)
@@ -83,7 +87,7 @@ class SharedPropertyController extends Controller
         $model = Enum::findOrFail($id);
         $model->update($validator->validated());
 
-        return $this->successRs(new EnumTypeResource($model));
+        return $this->successRs(new EnumResource($model));
     }
 
     public function destroy($id)

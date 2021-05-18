@@ -7,17 +7,17 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class EnumTypeResource extends JsonResource
 {
 
-  public function __construct($resource)
-  {
-    parent::__construct($resource);
-    self::withoutWrapping();
-  }
+    public function __construct($resource)
+    {
+        parent::__construct($resource);
+        self::withoutWrapping();
+    }
 
-  public function toArray($request)
-  {
-    return [
-      'code' => $this->code,
-      'label' => $this->label
-    ];
-  }
+    public function toArray($request)
+    {
+        return [
+            'code' => $this->code,
+            'label' => $this->label
+        ];
+    }
 }

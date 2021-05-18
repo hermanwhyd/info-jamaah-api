@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class EnumResource extends JsonResource
+class CustomFieldResource extends JsonResource
 {
 
     public function __construct($resource)
@@ -17,12 +17,12 @@ class EnumResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'code' => $this->code,
-            'label' => $this->label,
+            'groupEnumId' => $this->groupEnumId,
             'position' => $this->position,
-            'removable' => $this->removable,
-            'variables' => VariableResource::collection($this->whenLoaded('variable')),
-            'customFields' => CustomFieldResource::collection($this->whenLoaded('customFields'))
+            'fieldName' => $this->fieldName,
+            'fieldType' => $this->fieldType,
+            'fieldReference' => $this->fieldReference,
+            'group' => new EnumResource($this->whenLoaded('group')),
         ];
     }
 }

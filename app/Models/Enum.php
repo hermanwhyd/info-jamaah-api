@@ -7,46 +7,51 @@ use \Eloquence\Behaviours\CamelCasing;
 
 class Enum extends Model
 {
-  use CamelCasing;
+    use CamelCasing;
 
-  protected $table = 'm_enums';
+    protected $table = 'm_enums';
 
-  /**
-   * Indicates if the model should be timestamped.
-   *
-   * @var bool
-   */
-  public $timestamps = false;
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 
-  /**
-   * The attributes that are mass assignable.
-   *
-   * @var array
-   */
-  protected $fillable = [
-    'id', 'group', 'code', 'position', 'label',
-  ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'id', 'group', 'code', 'position', 'label',
+    ];
 
-  /**
-   * The attributes excluded from the model's JSON form.
-   *
-   * @var array
-   */
-  protected $hidden = [];
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    protected $hidden = [];
 
-  /**
-   * The attributes cast to specific type
-   *
-   * @var array
-   */
-  protected $casts = [
-    'id' => 'int',
-    'position' => 'int',
-    'removable' => 'boolean',
-  ];
+    /**
+     * The attributes cast to specific type
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id' => 'int',
+        'position' => 'int',
+        'removable' => 'boolean',
+    ];
 
-  public function variables()
-  {
-    return $this->morphMany(Variable::class, 'variable');
-  }
+    public function variables()
+    {
+        return $this->morphMany(Variable::class, 'variable');
+    }
+
+    public function customFields()
+    {
+        return $this->hasMany(CustomField::class, 'group_enum_id', 'id')->orderBy('position');
+    }
 }

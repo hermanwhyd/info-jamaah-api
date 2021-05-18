@@ -97,6 +97,11 @@ class Asset extends Model implements HasMedia
         return $this->morphOne(config('media-library.media_model'), 'model')->latest();
     }
 
+    public function additionalFields()
+    {
+        return $this->morphMany(AdditionalField::class, 'model');
+    }
+
     public function photos()
     {
         return $this->media()->whereCollectionName(self::MEDIA_TAG_PHOTO)->latest();
