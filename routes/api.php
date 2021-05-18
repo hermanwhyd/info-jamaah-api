@@ -47,6 +47,12 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
     $router->put('shared-props/batch-update', 'SharedPropertyController@batchUpdate');
     $router->get('shared-props/group/{group}', 'SharedPropertyController@getByGroup');
 
+    // custom-field
+    $router->post('custom-field', 'CustomFieldController@store');
+    $router->put('custom-field/{id}', 'CustomFieldController@update');
+    $router->delete('custom-field/{id}', 'CustomFieldController@destroy');
+    $router->put('custom-field/batch-update', 'CustomFieldController@batchUpdate');
+
     // jamaah
     $router->get('jamaah/paging', 'JamaahController@paging');
     $router->get('jamaah', 'JamaahController@getAll');

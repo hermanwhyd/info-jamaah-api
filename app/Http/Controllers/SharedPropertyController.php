@@ -69,6 +69,10 @@ class SharedPropertyController extends Controller
 
         $model = Enum::create($validator->validated());
 
+        if ($model) {
+            $model = Enum::find($model->id);
+        }
+
         return $this->successRs(new EnumResource($model));
     }
 
@@ -98,8 +102,8 @@ class SharedPropertyController extends Controller
             throw new Exception("Property enum with id: {$id} is not removable!");
         }
 
-        $model->images()->delete();
         $model->variables()->delete();
+        $model->customFields()->delete();
         $model->delete();
 
         return $this->successRs(null);

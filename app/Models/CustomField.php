@@ -22,7 +22,7 @@ class CustomField extends Model
      * @var array
      */
     protected $fillable = [
-        'groupEnumId', 'fieldName', 'fieldType', 'fieldReference'
+        'groupEnumId', 'fieldName', 'fieldType', 'fieldReference', 'position'
     ];
 
     /**
@@ -33,6 +33,7 @@ class CustomField extends Model
     protected $casts = [
         'id' => 'int',
         'groupEnumId' => 'int',
+        'position' => 'int'
     ];
 
     /**
