@@ -50,6 +50,6 @@ class AdditionalField extends Model
 
     public function customField()
     {
-        return $this->belongsTo(CustomField::class);
+        return $this->belongsTo(CustomField::class)->orderBy('position');
     }
 }

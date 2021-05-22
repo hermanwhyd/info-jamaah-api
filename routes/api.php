@@ -48,10 +48,16 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
     $router->get('shared-props/group/{group}', 'SharedPropertyController@getByGroup');
 
     // custom-field
+    $router->get('custom-field/{id}', 'CustomFieldController@find');
     $router->post('custom-field', 'CustomFieldController@store');
     $router->put('custom-field/{id}', 'CustomFieldController@update');
     $router->delete('custom-field/{id}', 'CustomFieldController@destroy');
     $router->put('custom-field/batch-update', 'CustomFieldController@batchUpdate');
+
+    // additional-field
+    $router->get('additional-field/{id}', 'AdditionalFieldController@find');
+    $router->put('additional-field/{id}', 'AdditionalFieldController@update');
+    $router->delete('additional-field/{id}', 'AdditionalFieldController@destroy');
 
     // jamaah
     $router->get('jamaah/paging', 'JamaahController@paging');
@@ -63,10 +69,14 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
     // asset sb
     $router->group(['prefix' => 'asset'], function () use ($router) {
         $router->get('', 'AssetController@getAll');
-        $router->get('/{id}', 'AssetController@findById');
+        $router->get('{id}', 'AssetController@findById');
+        $router->get('{id}/detail', 'AssetController@findAddFieldsById');
         $router->post('', 'AssetController@store');
         $router->put('', 'AssetController@update');
         $router->post('{id}/upload', 'AssetController@upload');
+
+        // additional field
+        $router->post('{id}/detail', 'AssetController@setAdditionalField');
 
         // maintenance
         $router->group(['prefix' => 'maintenance'], function () use ($router) {
@@ -78,7 +88,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
             $router->delete('{id}', 'AssetMaintenanceController@destroy');
         });
 
-        // maintenance
+        // audit
         $router->group(['prefix' => 'audit'], function () use ($router) {
             $router->get('', 'AssetAuditController@getAll');
             $router->get('paging', 'AssetAuditController@paging');

@@ -7,11 +7,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AssetResource extends JsonResource
 {
+    private String $mode;
 
-    public function __construct($resource)
+    public function __construct($resource, $mode = 'view')
     {
         parent::__construct($resource);
         self::withoutWrapping();
+        $this->mode = $mode;
     }
 
     public function toArray($request)
@@ -30,7 +32,7 @@ class AssetResource extends JsonResource
             'location' => new LocationResource($this->whenLoaded('location')),
             'avatar' => $this->avatar?->getUrl(Asset::MEDIA_TAG_THUMB),
             'photos' => MediaResource::collection($this->whenLoaded('photos')),
-            'details' => AssetDetailResource::collection($this->whenLoaded('details')),
+            'additionalFields' => AdditionalFieldResource::collection($this->whenLoaded('additionalFields')),
             'maintenances' => AssetMaintenanceResource::collection($this->whenLoaded('maintenances')),
             'audits' => AssetAuditResource::collection($this->whenLoaded('audits')),
             'media' => MediaResource::collection($this->whenLoaded('media', function () {

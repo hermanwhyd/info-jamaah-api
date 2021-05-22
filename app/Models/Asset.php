@@ -17,6 +17,8 @@ class Asset extends Model implements HasMedia
     const MEDIA_TAG_PHOTO = 'PHOTO';
     const MEDIA_TAG_DOCS = 'DOCS';
 
+    const CUSTOMFIELD_GROUP = 'CUSTOM_FIELD_ASSET';
+
     /**
      * The attributes that are mass assignable.
      *

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AssetResource;
+use App\Http\Resources\EnumResource;
 use App\Http\Resources\MediaResource;
 use App\Models\Asset;
 use App\Repositories\AssetRepository;
+use App\Repositories\EnumRepository;
 use App\Utils\MediaUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -13,11 +15,13 @@ use Illuminate\Support\Facades\Validator;
 class AssetController extends Controller
 {
 
-    protected $assetRepo;
+    protected AssetRepository $assetRepo;
+    protected EnumRepository $enumRepo;
 
-    public function __construct(AssetRepository $assetRepo)
+    public function __construct(AssetRepository $assetRepo, EnumRepository $enumRepo)
     {
         $this->assetRepo = $assetRepo;
+        $this->enumRepo = $enumRepo;
     }
 
     public function paging()
@@ -35,6 +39,33 @@ class AssetController extends Controller
     {
         $data = new AssetResource($this->assetRepo->queryBuilder()->whereId($id)->first());
         return $this->successRs($data);
+    }
+
+    public function findAddFieldsById(Request $request, $id)
+    {
+        $groups = $this->enumRepo->queryBuilder()->with(['customFields.value' => function ($query) use ($id) {
+            $query->whereModelId($id);
+        }])->whereGroup('CUSTOM_FIELD_ASSET')->orderBy('position')->get();
+
+        $data = EnumResource::collection($groups);
+        return $this->successRs($data);
+    }
+
+    public function setAdditionalField(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'customFieldId' => 'required|exists:custom_fields,id',
+            'value' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
+        }
+
+        $asset = Asset::findOrFail($id);
+        $result = $asset->additionalFields()->create($validator->validated());
+
+        return $this->successRs($result);
     }
 
     public function store(Request $request)

@@ -3,9 +3,11 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Arr;
 
 class EnumResource extends JsonResource
 {
+    protected $mode;
 
     public function __construct($resource)
     {
@@ -13,9 +15,15 @@ class EnumResource extends JsonResource
         self::withoutWrapping();
     }
 
+    public function mode($mode)
+    {
+        $this->mode = $mode;
+        return $this;
+    }
+
     public function toArray($request)
     {
-        return [
+        $result = [
             'id' => $this->id,
             'code' => $this->code,
             'label' => $this->label,
@@ -24,5 +32,6 @@ class EnumResource extends JsonResource
             'variables' => VariableResource::collection($this->whenLoaded('variable')),
             'customFields' => CustomFieldResource::collection($this->whenLoaded('customFields'))
         ];
+        return $result;
     }
 }

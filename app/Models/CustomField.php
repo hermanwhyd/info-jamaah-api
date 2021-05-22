@@ -52,4 +52,9 @@ class CustomField extends Model
     {
         return $this->hasMany(AdditionalField::class);
     }
+
+    public function value()
+    {
+        return $this->hasOne(AdditionalField::class);
+    }
 }

@@ -26,7 +26,7 @@ class SharedPropertyController extends Controller
      */
     public function getByGroup(Request $request, $group)
     {
-        if ($request->has('full-data'))
+        if ($request->query('mode', 'view') == 'edit')
             return $this->successRs(EnumResource::collection($this->enumRepo->queryBuilder()->whereGroup($group)->orderBy('position')->get()));
 
         return $this->successRs(EnumTypeResource::collection($this->enumRepo->queryBuilder()->whereGroup($group)->orderBy('position')->get()));

@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AssetDetailResource extends JsonResource
+class AdditionalFieldResource extends JsonResource
 {
 
     public function __construct($resource)
@@ -16,12 +16,9 @@ class AssetDetailResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => (int) $this->id,
-            'assetId' => (int) $this->assetId,
-            'typeEnum' => $this->typeEnum,
+            'id' => $this->id,
             'value' => $this->value,
-            'asset' => new AssetResource($this->whenLoaded('asset')),
-            'type' => new EnumTypeResource($this->whenLoaded('type')),
+            'customField' => new CustomFieldResource($this->whenLoaded('customField')),
         ];
     }
 }

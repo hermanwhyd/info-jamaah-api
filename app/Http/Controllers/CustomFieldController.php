@@ -19,6 +19,11 @@ class CustomFieldController extends Controller
         $this->customFieldRepo = $customFieldRepo;
     }
 
+    public function findById($id)
+    {
+        return $this->successRs(new CustomFieldResource($this->jamaahRepo->queryBuilder()->whereId($id)->first()));
+    }
+
     public function getByGroup($groupId)
     {
         return $this->successRs(CustomFieldResource::collection($this->enumRepo->queryBuilder()->whereGroupEnumId($groupId)->orderBy('position')->get()));

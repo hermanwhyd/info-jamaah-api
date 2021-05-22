@@ -22,7 +22,9 @@ class CustomFieldResource extends JsonResource
             'fieldName' => $this->fieldName,
             'fieldType' => $this->fieldType,
             'fieldReference' => $this->fieldReference,
-            'group' => new EnumResource($this->whenLoaded('group')),
+            'group' => new EnumTypeResource($this->whenLoaded('group')),
+            'additionalFields' => AdditionalFieldResource::collection($this->whenLoaded('additionalFields')),
+            'value' => new AdditionalFieldResource($this->whenLoaded('value'))
         ];
     }
 }
