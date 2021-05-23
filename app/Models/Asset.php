@@ -25,7 +25,7 @@ class Asset extends Model implements HasMedia
      * @var array
      */
     protected $fillable = [
-        'title', 'tagNo', 'categoryEnum', 'location', 'statusEnum', 'ownerEnum'
+        'title', 'tagNo', 'categoryEnum', 'location', 'statusEnum', 'pembinaEnum'
     ];
 
     /**
@@ -64,9 +64,9 @@ class Asset extends Model implements HasMedia
         return $this->hasMany(AssetDetail::class);
     }
 
-    public function owner()
+    public function pembina()
     {
-        return $this->belongsTo(Enum::class, 'owner_enum', 'code')->where('group', 'like', 'PEMBINA_%');
+        return $this->belongsTo(Enum::class, 'pembina_enum', 'code')->where('group', 'like', 'PEMBINA_%');
     }
 
     public function category()

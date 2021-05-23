@@ -46,6 +46,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
     $router->delete('shared-props/{id}', 'SharedPropertyController@destroy');
     $router->put('shared-props/batch-update', 'SharedPropertyController@batchUpdate');
     $router->get('shared-props/group/{group}', 'SharedPropertyController@getByGroup');
+    $router->get('shared-props/options/{selector}', 'SharedPropertyController@getOptionBySelector');
 
     // custom-field
     $router->get('custom-field/{id}', 'CustomFieldController@find');
@@ -72,7 +73,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
         $router->get('{id}', 'AssetController@findById');
         $router->get('{id}/detail', 'AssetController@findAddFieldsById');
         $router->post('', 'AssetController@store');
-        $router->put('', 'AssetController@update');
+        $router->put('{id}', 'AssetController@update');
         $router->post('{id}/upload', 'AssetController@upload');
 
         // additional field

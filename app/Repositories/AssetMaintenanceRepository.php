@@ -12,7 +12,7 @@ class AssetMaintenanceRepository
         return QueryBuilder::for(AssetMaintenance::class)
             ->allowedFilters(['label'])
             ->allowedIncludes([
-                'creator', 'asset.category', 'asset.owner', 'asset.location', 'supplier', 'type'
+                'creator', 'asset.category', 'asset.pembina', 'asset.location', 'supplier', 'type'
             ]);
     }
 }

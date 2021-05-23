@@ -96,6 +96,35 @@ class AssetController extends Controller
         return $this->successRs($data);
     }
 
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'tagNo' => 'required|max:15',
+            'categoryEnum' => 'required|exists:m_enums,code',
+            'statusEnum' => 'required|exists:m_enums,code',
+            'pembinaEnum' => 'required|exists:m_enums,code',
+            'locationId' => 'required|exists:locations,id',
+            'photo' => 'nullable|image'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
+        }
+
+        $asset = $this->assetRepo->queryBuilder()->whereId($id)->firstOrFail();
+        $asset->update($validator->validated());
+        $asset->save();
+
+        // Add media
+        if ($request->filled('photo')) {
+            $asset->addMediaFromRequest('photo')->toMediaCollection();
+        }
+
+        $data = new AssetResource($asset);
+        return $this->successRs($data);
+    }
+
     public function upload(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [

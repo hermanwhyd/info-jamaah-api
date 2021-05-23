@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\EnumResource;
 use App\Http\Resources\EnumTypeResource;
+use App\Http\Resources\LocationResource;
 use App\Models\Enum;
 use App\Repositories\EnumRepository;
+use App\Repositories\LocationRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -15,10 +17,12 @@ class SharedPropertyController extends Controller
 {
 
     protected EnumRepository $enumRepo;
+    protected LocationRepository $locationRepo;
 
-    public function __construct(EnumRepository $enumRepo)
+    public function __construct(EnumRepository $enumRepo, LocationRepository $locationRepo)
     {
         $this->enumRepo = $enumRepo;
+        $this->locationRepo = $locationRepo;
     }
 
     /**
@@ -107,5 +111,20 @@ class SharedPropertyController extends Controller
         $model->delete();
 
         return $this->successRs(null);
+    }
+
+    public function getOptionBySelector($selector)
+    {
+        if ($selector === 'location') {
+            $data = $this->locationRepo->queryBuilder()->get();
+            return $this->successRs(LocationResource::collection($data));
+        }
+
+        if ($selector === 'pembina') {
+            $data = $this->enumRepo->queryBuilder()->where('group', 'like', 'PEMBINA_%')->orderBy('position')->get();
+            return $this->successRs(EnumTypeResource::collection($data));
+        }
+
+        return $this->errorRs('failed', `Tidak ada selector ${selector}`, null, 400);
     }
 }

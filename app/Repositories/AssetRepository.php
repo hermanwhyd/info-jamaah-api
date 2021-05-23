@@ -12,7 +12,7 @@ class AssetRepository
         return QueryBuilder::for(Asset::class)
             ->allowedFilters(['title'])
             ->allowedIncludes([
-                'additionalFields.customField.group', 'owner', 'category', 'status', 'location.type', 'audits.status', 'audits.location', 'audits.assetStatus',
+                'additionalFields.customField.group', 'pembina', 'category', 'status', 'location.type', 'audits.status', 'audits.location', 'audits.assetStatus',
                 'maintenances.supplier', 'maintenances.type', 'maintenances.creator',
                 'audits.assetStatus', 'audits.location.type', 'media', 'photos'
             ]);
