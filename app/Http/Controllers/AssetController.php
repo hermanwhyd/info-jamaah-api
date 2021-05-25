@@ -71,10 +71,12 @@ class AssetController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'fullName' => 'required',
-            'nickName' => 'required',
-            'gender' => 'required',
+            'title' => 'required',
+            'tagNo' => 'required|max:15',
+            'categoryEnum' => 'required|exists:m_enums,code',
+            'statusEnum' => 'required|exists:m_enums,code',
             'pembinaEnum' => 'required|exists:m_enums,code',
+            'locationId' => 'required|exists:locations,id',
             'photo' => 'nullable|image'
         ]);
 
@@ -83,14 +85,12 @@ class AssetController extends Controller
         }
 
         $asset = new Asset($validator->validated());
+        $asset = $this->assetRepo->queryBuilder()->create($validator->validated());
 
         // Add media
         if ($request->filled('photo')) {
             $asset->addMediaFromRequest('photo')->toMediaCollection();
         }
-
-        // Load missing relationship
-        // $asset->loadMissing(['']);
 
         $data = new AssetResource($asset);
         return $this->successRs($data);

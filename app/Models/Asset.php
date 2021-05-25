@@ -25,7 +25,7 @@ class Asset extends Model implements HasMedia
      * @var array
      */
     protected $fillable = [
-        'title', 'tagNo', 'categoryEnum', 'location', 'statusEnum', 'pembinaEnum'
+        'title', 'tagNo', 'categoryEnum', 'locationId', 'statusEnum', 'pembinaEnum'
     ];
 
     /**
