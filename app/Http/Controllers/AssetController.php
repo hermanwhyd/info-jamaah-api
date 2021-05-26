@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AssetResource;
+use App\Http\Resources\EnumCollectionResource;
 use App\Http\Resources\EnumResource;
 use App\Http\Resources\MediaResource;
 use App\Models\Asset;
@@ -47,7 +48,7 @@ class AssetController extends Controller
             $query->whereModelId($id);
         }])->whereGroup('CUSTOM_FIELD_ASSET')->orderBy('position')->get();
 
-        $data = EnumResource::collection($groups);
+        $data = EnumResource::collection($groups, $request->input('mode'));
         return $this->successRs($data);
     }
 

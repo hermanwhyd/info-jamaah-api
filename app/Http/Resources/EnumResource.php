@@ -7,18 +7,13 @@ use Illuminate\Support\Arr;
 
 class EnumResource extends JsonResource
 {
-    protected $mode;
+    private $mode;
 
-    public function __construct($resource)
+    public function __construct($resource, $mode = null)
     {
         parent::__construct($resource);
         self::withoutWrapping();
-    }
-
-    public function mode($mode)
-    {
         $this->mode = $mode;
-        return $this;
     }
 
     public function toArray($request)
@@ -30,8 +25,18 @@ class EnumResource extends JsonResource
             'position' => $this->position,
             'removable' => $this->removable,
             'variables' => VariableResource::collection($this->whenLoaded('variable')),
-            'customFields' => CustomFieldResource::collection($this->whenLoaded('customFields'))
+            'customFields' => CustomFieldResource::collection($this->whenLoaded('customFields'), $this->mode)
         ];
+
+        if ($this->mode === 'view') {
+            return Arr::except($result, ['position', 'removable']);
+        }
+
         return $result;
+    }
+
+    public static function collection($resource, $mode = null)
+    {
+        return new AnonymousResourceCollection($resource, EnumResource::class, $mode);
     }
 }
