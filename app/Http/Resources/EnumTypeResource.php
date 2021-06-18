@@ -15,9 +15,10 @@ class EnumTypeResource extends JsonResource
 
     public function toArray($request)
     {
-        return [
+        return array_filter([
             'code' => $this->code,
-            'label' => $this->label
-        ];
+            'label' => $this->label,
+            'enumablesCount' => $this->enumablesCount
+        ]);
     }
 }

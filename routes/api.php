@@ -98,6 +98,15 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
             $router->put('{id}', 'AssetAuditController@update');
             $router->delete('{id}', 'AssetAuditController@destroy');
         });
+
+        // notifier
+        $router->post('{id}/notifier', 'NotifierController@storeForAsset');
+        $router->group(['prefix' => 'notifier'], function () use ($router) {
+            $router->put('{id}', 'NotifierController@update');
+            $router->delete('{id}', 'NotifierController@destroy');
+            $router->post('{id}/subscription', 'NotifierController@subscribe');
+            $router->delete('{id}/subscription/{subId}', 'NotifierController@unsubscribe');
+        });
     });
 
     $router->group(['prefix' => 'media'], function () use ($router) {

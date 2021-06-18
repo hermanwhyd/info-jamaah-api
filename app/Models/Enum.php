@@ -54,4 +54,9 @@ class Enum extends Model
     {
         return $this->hasMany(CustomField::class, 'group_enum_id', 'id')->orderBy('position');
     }
+
+    public function enumables()
+    {
+        return $this->hasMany(Enumable::class, 'enum_id', 'id');
+    }
 }

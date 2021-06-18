@@ -52,4 +52,9 @@ class AdditionalField extends Model
     {
         return $this->belongsTo(CustomField::class)->orderBy('position');
     }
+
+    public function notifiers()
+    {
+        return $this->morphMany(Notifier::class, 'referable');
+    }
 }

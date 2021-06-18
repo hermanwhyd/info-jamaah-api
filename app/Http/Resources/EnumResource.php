@@ -18,15 +18,17 @@ class EnumResource extends JsonResource
 
     public function toArray($request)
     {
-        $result = [
+        $result = array_filter([
             'id' => $this->id,
             'code' => $this->code,
             'label' => $this->label,
             'position' => $this->position,
             'removable' => $this->removable,
             'variables' => VariableResource::collection($this->whenLoaded('variable')),
-            'customFields' => CustomFieldResource::collection($this->whenLoaded('customFields'), $this->mode)
-        ];
+            'customFields' => CustomFieldResource::collection($this->whenLoaded('customFields'), $this->mode),
+            'enumables' => EnumableResource::collection($this->whenLoaded('enumables')),
+            'enumablesCount' => $this->enumablesCount,
+        ]);
 
         if ($this->mode === 'view') {
             return Arr::except($result, ['position', 'removable']);

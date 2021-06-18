@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AdditionalFieldResource;
 use App\Http\Resources\EnumResource;
 use App\Http\Resources\EnumTypeResource;
 use App\Http\Resources\LocationResource;
+use App\Models\AdditionalField;
+use App\Models\Asset;
 use App\Models\Enum;
 use App\Repositories\EnumRepository;
 use App\Repositories\LocationRepository;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -113,7 +117,7 @@ class SharedPropertyController extends Controller
         return $this->successRs(null);
     }
 
-    public function getOptionBySelector($selector)
+    public function getOptionBySelector(Request $request, $selector)
     {
         if ($selector === 'location') {
             $data = $this->locationRepo->queryBuilder()->get();
@@ -123,6 +127,31 @@ class SharedPropertyController extends Controller
         if ($selector === 'pembina') {
             $data = $this->enumRepo->queryBuilder()->where('group', 'like', 'PEMBINA_%')->orderBy('position')->get();
             return $this->successRs(EnumTypeResource::collection($data));
+        }
+
+        if ($selector === 'asset-af') {
+            $assetId = $request->query('id');
+            $addFields = AdditionalField::with(
+                'customField'
+            )->whereHas(
+                'customField',
+                function (Builder $query) {
+                    $query->where('field_type', 'date');
+                }
+            )->whereHasMorph(
+                'model',
+                [Asset::class],
+                function (Builder $query, $type) use ($assetId) {
+                    $query->where('model_id', $assetId);
+                }
+            )->get();
+
+            return $this->successRs(AdditionalFieldResource::collection($addFields));
+        }
+
+        if ($selector === 'pengrs-wc') {
+            $data = Enum::whereGroup('PENGURUS')->withCount('enumables')->get();
+            return $this->successRs(EnumResource::collection($data));
         }
 
         return $this->errorRs('failed', `Tidak ada selector ${selector}`, null, 400);

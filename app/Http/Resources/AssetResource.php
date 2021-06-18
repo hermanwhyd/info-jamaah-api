@@ -34,6 +34,7 @@ class AssetResource extends JsonResource
             'photos' => MediaResource::collection($this->whenLoaded('photos')),
             'additionalFields' => AdditionalFieldResource::collection($this->whenLoaded('additionalFields')),
             'maintenances' => AssetMaintenanceResource::collection($this->whenLoaded('maintenances')),
+            'notifiers' => NotifierResource::collection($this->whenLoaded('notifiers')),
             'audits' => AssetAuditResource::collection($this->whenLoaded('audits')),
             'media' => MediaResource::collection($this->whenLoaded('media', function () {
                 return $this->media->all();

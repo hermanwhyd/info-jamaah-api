@@ -14,7 +14,8 @@ class AssetRepository
             ->allowedIncludes([
                 'additionalFields.customField.group', 'pembina', 'category', 'status', 'location.type', 'audits.status', 'audits.location', 'audits.assetStatus',
                 'maintenances.supplier', 'maintenances.type', 'maintenances.creator',
-                'audits.assetStatus', 'audits.location.type', 'media', 'photos'
+                'audits.assetStatus', 'audits.location.type', 'media', 'photos',
+                'notifiers.referable', 'notifiers.subscriptions.subscriber.enumables.model.contacts', 'notifiers.referable.customField'
             ]);
     }
 }

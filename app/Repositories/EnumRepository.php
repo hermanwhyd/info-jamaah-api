@@ -9,6 +9,6 @@ class EnumRepository
 {
     public function queryBuilder()
     {
-        return QueryBuilder::for(Enum::class)->allowedIncludes(['variables', 'customFields']);
+        return QueryBuilder::for(Enum::class)->allowedIncludes(['enumables', 'customFields']);
     }
 }

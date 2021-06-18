@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AssetResource;
-use App\Http\Resources\EnumCollectionResource;
 use App\Http\Resources\EnumResource;
 use App\Http\Resources\MediaResource;
 use App\Models\Asset;

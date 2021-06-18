@@ -59,11 +59,6 @@ class Asset extends Model implements HasMedia
 
     protected $with = [];
 
-    public function details()
-    {
-        return $this->hasMany(AssetDetail::class);
-    }
-
     public function pembina()
     {
         return $this->belongsTo(Enum::class, 'pembina_enum', 'code')->where('group', 'like', 'PEMBINA_%');
@@ -128,5 +123,10 @@ class Asset extends Model implements HasMedia
             ->width(150)
             ->height(150)
             ->sharpen(10);
+    }
+
+    public function notifiers()
+    {
+        return $this->morphMany(Notifier::class, 'model');
     }
 }

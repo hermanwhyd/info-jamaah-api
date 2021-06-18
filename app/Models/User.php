@@ -76,4 +76,16 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(Jamaah::class);
     }
+
+    /**
+     * Route notifications for the mail channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return array|string
+     */
+    public function routeNotificationForMail($notification)
+    {
+        // Return email address and name
+        return [$this->email => $this->jamaah?->fullName];
+    }
 }
