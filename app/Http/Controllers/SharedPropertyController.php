@@ -7,11 +7,13 @@ use App\Http\Resources\AdditionalFieldResource;
 use App\Http\Resources\EnumResource;
 use App\Http\Resources\EnumTypeResource;
 use App\Http\Resources\LocationResource;
+use App\Http\Resources\SupplierResource;
 use App\Models\AdditionalField;
 use App\Models\Asset;
 use App\Models\Enum;
 use App\Repositories\EnumRepository;
 use App\Repositories\LocationRepository;
+use App\Repositories\SupplierRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -22,11 +24,16 @@ class SharedPropertyController extends Controller
 
     protected EnumRepository $enumRepo;
     protected LocationRepository $locationRepo;
+    protected SupplierRepository $supplierRepo;
 
-    public function __construct(EnumRepository $enumRepo, LocationRepository $locationRepo)
-    {
+    public function __construct(
+        EnumRepository $enumRepo,
+        LocationRepository $locationRepo,
+        SupplierRepository $supplierRepo
+    ) {
         $this->enumRepo = $enumRepo;
         $this->locationRepo = $locationRepo;
+        $this->supplierRepo = $supplierRepo;
     }
 
     /**
@@ -150,8 +157,13 @@ class SharedPropertyController extends Controller
         }
 
         if ($selector === 'pengrs-wc') {
-            $data = Enum::whereGroup('PENGURUS')->withCount('enumables')->get();
+            $data = $this->enumRepo->queryBuilder()->whereGroup('PENGURUS')->withCount('enumables')->get();
             return $this->successRs(EnumResource::collection($data));
+        }
+
+        if ($selector === 'vendor') {
+            $data = $this->supplierRepo->queryBuilder()->orderBy('title')->get();
+            return $this->successRs(SupplierResource::collection($data));
         }
 
         return $this->errorRs('failed', `Tidak ada selector ${selector}`, null, 400);

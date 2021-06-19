@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
+use Cesargb\Database\Support\CascadeDelete;
 
 class Notifier extends Model
 {
-    use CamelCasing;
+    use CamelCasing, CascadeDelete;
+
+    protected $cascadeDeleteMorph = ['subscriptions'];
 
     /**
      * Indicates if the model should be timestamped.

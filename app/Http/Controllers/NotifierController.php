@@ -91,7 +91,11 @@ class NotifierController extends Controller
 
     public function destroy($id)
     {
-        $deleted = Notifier::findOrFail($id);
+        $deleted = Notifier::destroy($id);
+
+        $model = new Notifier();
+        $model->deleteMorphResidual();
+
         return $this->successRs($deleted);
     }
 
