@@ -119,7 +119,7 @@ class AssetMaintenanceController extends Controller
             ->usingName($originalFileName)
             ->usingFileName($fileName)
             ->withCustomProperties(['notes' => $request->input('notes')])
-            ->storingConversionsOnDisk('media')
+            ->storingConversionsOnDisk('s3')
             ->toMediaCollection($collection);
 
         return new MediaResource($media);

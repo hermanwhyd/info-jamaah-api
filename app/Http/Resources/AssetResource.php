@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Asset;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AssetResource extends JsonResource
@@ -30,7 +31,7 @@ class AssetResource extends JsonResource
             'status' => new EnumTypeResource($this->whenLoaded('status')),
             'pembina' => new PembinaResource($this->whenLoaded('pembina')),
             'location' => new LocationResource($this->whenLoaded('location')),
-            'avatar' => $this->avatar?->getUrl(Asset::MEDIA_TAG_THUMB),
+            'avatar' => $this->avatar?->getTemporaryUrl(Carbon::now()->addMinutes(env('AWS_TEMPORARY_URL_MINUTES', '60'),), Asset::MEDIA_TAG_THUMB),
             'photos' => MediaResource::collection($this->whenLoaded('photos')),
             'additionalFields' => AdditionalFieldResource::collection($this->whenLoaded('additionalFields')),
             'maintenances' => AssetMaintenanceResource::collection($this->whenLoaded('maintenances')),

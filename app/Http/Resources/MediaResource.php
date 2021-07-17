@@ -29,7 +29,7 @@ class MediaResource extends JsonResource
             'size' => (int) $this->size,
             'disk' => $this->disk,
             'file' => [
-                'thumb' => MediaUtils::isImage($this->mime_type) ? $this->getUrl(Asset::MEDIA_TAG_THUMB) : null,
+                'thumb' => MediaUtils::isImage($this->mime_type) ? $this->getTemporaryUrl(Carbon::now()->addMinutes(env('AWS_TEMPORARY_URL_MINUTES', '60'),), Asset::MEDIA_TAG_THUMB) : null,
                 'url' => MediaUtils::isImage($this->mime_type) ? $this->getTemporaryUrl(Carbon::now()->addMinutes(env('AWS_TEMPORARY_URL_MINUTES', '60'),)) : null,
                 'download' => route('media.download', ['uuid' => $this->uuid])
             ],

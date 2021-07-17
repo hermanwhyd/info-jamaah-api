@@ -6,6 +6,7 @@ use App\Http\Resources\AssetResource;
 use App\Http\Resources\EnumResource;
 use App\Http\Resources\MediaResource;
 use App\Models\Asset;
+use App\Models\Notifier;
 use App\Repositories\AssetRepository;
 use App\Repositories\EnumRepository;
 use App\Utils\MediaUtils;
@@ -72,7 +73,7 @@ class AssetController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'tagNo' => 'required|max:15',
+            'tagNo' => 'nullable|max:15',
             'categoryEnum' => 'required|exists:m_enums,code',
             'statusEnum' => 'required|exists:m_enums,code',
             'pembinaEnum' => 'required|exists:m_enums,code',
@@ -96,11 +97,65 @@ class AssetController extends Controller
         return $this->successRs($data);
     }
 
+    public function copy(Request $request, $id)
+    {
+        $asset = $this->assetRepo->queryBuilder()->findOrFail($id);
+
+        $newAsset = $asset->replicate();
+        $newAsset->title = 'Copy of ' . $newAsset->title;
+        $newAsset->tagNo = null;
+        $newAsset->push();
+
+        // Copy detail
+        if ($request->boolean('detail')) {
+            foreach ($asset->additionalFields as $item) {
+                $newAsset->additionalFields()->create($item->toArray());
+            }
+        }
+
+        // Copy maintenance
+        if ($request->boolean('maintenance')) {
+            foreach ($asset->maintenances as $item) {
+                $newAsset->maintenances()->create($item->toArray());
+            }
+        }
+
+        // Copy audit
+        if ($request->boolean('audit')) {
+            foreach ($asset->audits as $item) {
+                $newAsset->audits()->create($item->toArray());
+            }
+        }
+
+        // Copy notification
+        if ($request->boolean('notification')) {
+            foreach ($asset->notifiers as $item) {
+                $newNotifier = $item->replicate();
+                $newNotifier->push();
+                $newNotifier->model()->associate($newAsset);
+                $newNotifier->save();
+            }
+        }
+
+        // Copy file
+        if ($request->boolean('file')) {
+            $asset->loadMissing('media');
+            foreach ($asset->media as $item) {
+                $item->copy($newAsset, $item->collection_name, $item->disk);
+            }
+        }
+
+        //  Save all
+        $newAsset->save();
+
+        return $this->successRs($newAsset);
+    }
+
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'tagNo' => 'required|max:15',
+            'tagNo' => 'nullable|max:15',
             'categoryEnum' => 'required|exists:m_enums,code',
             'statusEnum' => 'required|exists:m_enums,code',
             'pembinaEnum' => 'required|exists:m_enums,code',
@@ -147,9 +202,39 @@ class AssetController extends Controller
             ->usingName($originalFileName)
             ->usingFileName($fileName)
             ->withCustomProperties(['notes' => $request->input('notes')])
-            ->storingConversionsOnDisk('media')
+            ->storingConversionsOnDisk('s3')
             ->toMediaCollection($collection);
 
         return new MediaResource($media);
+    }
+
+    public function destroy($id)
+    {
+        $asset = Asset::findOrFail($id);
+
+        foreach ($asset->additionalFields as $item) {
+            $item->delete();
+        }
+
+        foreach ($asset->maintenances as $item) {
+            $item->delete();
+        }
+
+        foreach ($asset->audits as $item) {
+            $item->delete();
+        }
+
+        foreach ($asset->notifiers as $item) {
+            $item->delete();
+        }
+        (new Notifier())->deleteMorphResidual();
+
+        foreach ($asset->media as $item) {
+            $item->delete();
+        }
+
+        $deleted = $asset->delete();
+
+        return $this->successRs($deleted);
     }
 }
