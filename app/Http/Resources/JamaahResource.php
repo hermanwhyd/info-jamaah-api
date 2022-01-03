@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Jamaah;
 use App\Utils\DateUtils;
-use App\Utils\MediaUtils;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class JamaahResource extends JsonResource
@@ -29,7 +29,8 @@ class JamaahResource extends JsonResource
             'family' => new FamilyResource($this->when($this->relationLoaded('family'), function () {
                 return $this->family->first();
             })),
-            'photos' => '', //MediaUtils::getPhotoUrlOrDefault($this->firstMedia([Jamaah::MEDIA_TAG_CLOSEUP])),
+            'avatar' => $this->avatar?->getTemporaryUrl(Carbon::now()->addMinutes(env('AWS_TEMPORARY_URL_MINUTES', '60'),), Jamaah::MEDIA_TAG_THUMB),
+            'photo' => MediaResource::collection($this->whenLoaded('photos')),
             'families' => FamilyResource::collection($this->whenLoaded('families')),
             'contacts' => ContactResource::collection($this->whenLoaded('contacts')),
             'details' => JamaahDetailResource::collection($this->whenLoaded('details')),

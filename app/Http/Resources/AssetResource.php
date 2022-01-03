@@ -8,7 +8,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AssetResource extends JsonResource
 {
-    private String $mode;
 
     public function __construct($resource, $mode = 'view')
     {

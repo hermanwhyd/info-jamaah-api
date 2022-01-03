@@ -67,6 +67,20 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
     $router->post('jamaah', 'JamaahController@store');
     $router->post('jamaah/{id}/photo', 'JamaahController@updatePhoto');
 
+    // pembina
+    $router->group(['prefix' => 'pembina'], function () use ($router) {
+        $router->get('', 'PembinaController@getAll');
+        $router->get('{initialPembina}/overview', 'PembinaController@getOverview');
+
+        // kepengurusan
+        $router->group(['prefix' => '{initialPembina}/kepengurusan'], function () use ($router) {
+            $router->get('', 'PembinaController@getPengurusList');
+            $router->get('candidate', 'PembinaController@getCandidatPengurus');
+            $router->post('', 'PembinaController@addPengurus');
+            $router->delete('{id}', 'PembinaController@removePengurus');
+        });
+    });
+
     // asset sb
     $router->group(['prefix' => 'asset'], function () use ($router) {
         $router->get('', 'AssetController@getAll');
