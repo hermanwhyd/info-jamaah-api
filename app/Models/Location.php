@@ -22,7 +22,7 @@ class Location extends Model
      * @var array
      */
     protected $fillable = [
-        'typeEnum', 'label'
+        'typeEnum', 'label', 'pembinaEnum'
     ];
 
     /**
