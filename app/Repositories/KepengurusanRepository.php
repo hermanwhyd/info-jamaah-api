@@ -11,7 +11,7 @@ class KepengurusanRepository
     public function queryBuilder()
     {
         return QueryBuilder::for(Kepengurusan::class)
-            ->allowedIncludes(['dapuan', 'pembina', 'jamaah'])
+            ->allowedIncludes(['dapukan', 'pembina', 'jamaah'])
             ->allowedFilters([AllowedFilter::trashed()]);
     }
 }

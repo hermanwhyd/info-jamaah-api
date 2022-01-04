@@ -157,7 +157,7 @@ class SharedPropertyController extends Controller
         }
 
         if ($selector === 'pengrs-wc') {
-            $data = $this->enumRepo->queryBuilder()->whereGroup('PENGURUS')->withCount('enumables')->get();
+            $data = $this->enumRepo->queryBuilder()->where('group', 'like', 'DAPUKAN_%')->get();
             return $this->successRs(EnumResource::collection($data));
         }
 

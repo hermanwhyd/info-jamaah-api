@@ -26,8 +26,8 @@ class EnumResource extends JsonResource
             'removable' => $this->removable,
             'variables' => VariableResource::collection($this->whenLoaded('variable')),
             'customFields' => CustomFieldResource::collection($this->whenLoaded('customFields'), $this->mode),
+            'kepengurusans' => KepengurusanResource::collection($this->whenLoaded('kepengurusans')),
             'enumables' => EnumableResource::collection($this->whenLoaded('enumables')),
-            'enumablesCount' => $this->enumablesCount,
         ]);
 
         if ($this->mode === 'view') {

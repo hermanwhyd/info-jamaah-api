@@ -59,4 +59,9 @@ class Enum extends Model
     {
         return $this->hasMany(Enumable::class, 'enum_id', 'id');
     }
+
+    public function kepengurusans()
+    {
+        return $this->hasMany(Kepengurusan::class, 'dapukan_enum', 'code');
+    }
 }

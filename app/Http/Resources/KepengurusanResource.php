@@ -18,7 +18,7 @@ class KepengurusanResource extends JsonResource
         return [
             'id' => $this->id,
             'description' => $this->description,
-            'dapuan' => new EnumTypeResource($this->whenLoaded('dapuan')),
+            'dapukan' => new EnumTypeResource($this->whenLoaded('dapukan')),
             'pembina' => new EnumTypeResource($this->whenLoaded('pembina')),
             'jamaah' => new JamaahResource($this->whenLoaded('jamaah')),
             'createdAt' => DateUtils::toIso8601String($this->created_at),
