@@ -62,7 +62,7 @@ class PembinaController extends Controller
     public function addPengurus(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'pengurusEnum' => 'required|exists:m_enums,code',
+            'dapuanEnum' => 'required|exists:m_enums,code',
             'pembinaEnum' => 'required|exists:m_enums,code',
             'jamaahId' => 'required|exists:jamaahs,id'
         ]);
@@ -73,7 +73,7 @@ class PembinaController extends Controller
 
         // check if already exist
         $model = Kepengurusan::withTrashed()
-            ->where('pengurus_enum', $request->pengurusEnum)
+            ->where('dapuan_enum', $request->dapuanEnum)
             ->where('pembina_enum', $request->pembinaEnum)
             ->where('jamaah_id', $request->jamaahId)
             ->first();
@@ -85,7 +85,7 @@ class PembinaController extends Controller
         }
 
         // Load required data
-        $model->loadMissing(['jamaah', 'pengurus', 'pembina']);
+        $model->loadMissing(['jamaah', 'dapuan', 'pembina']);
 
         return $this->successRs(new KepengurusanResource($model));
     }
@@ -114,10 +114,10 @@ class PembinaController extends Controller
         }
 
         // If has pengurus, filter where not already in kepengurusan
-        if ($request->filled('pengurus_enum')) {
-            $pengurusEnum = $request->query('pengurus_enum');
-            $jamaahQ->whereDoesntHave('dapuan', function ($query) use ($pengurusEnum) {
-                $query->where('pengurus_enum', $pengurusEnum);
+        if ($request->filled('dapuan_enum')) {
+            $dapuanEnum = $request->query('dapuan_enum');
+            $jamaahQ->whereDoesntHave('dapuan', function ($query) use ($dapuanEnum) {
+                $query->where('dapuan_enum', $dapuanEnum);
             });
         }
 

@@ -18,7 +18,7 @@ class Kepengurusan extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'pengurusEnum', 'pembinaEnum', 'jamaahId', 'description'
+        'id', 'dapuanEnum', 'pembinaEnum', 'jamaahId', 'description'
     ];
 
     /**
@@ -56,9 +56,9 @@ class Kepengurusan extends Model
         return $this->belongsTo(Enum::class, 'pembina_enum', 'code')->where('group', 'like', 'PEMBINA_%');
     }
 
-    public function pengurus()
+    public function dapuan()
     {
-        return $this->belongsTo(Enum::class, 'pengurus_enum', 'code')->where('group', 'like', 'PENGURUS_%');
+        return $this->belongsTo(Enum::class, 'dapuan_enum', 'code')->where('group', 'like', 'DAPUAN_%');
     }
 
     public function jamaah()
