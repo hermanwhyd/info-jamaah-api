@@ -32,7 +32,7 @@ class CustomFieldResource extends JsonResource
         ];
 
         if ($this->mode === 'view') {
-            return Arr::except($data, ['position', 'groupEnumId', 'fieldReference']);
+            $data = Arr::except($data, ['position', 'groupEnumId', 'fieldReference']);
         }
 
         return $data;

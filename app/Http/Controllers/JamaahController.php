@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\EnumResource;
 use App\Http\Resources\JamaahResource;
+use App\Http\Resources\MediaResource;
 use App\Models\Jamaah;
+use App\Repositories\EnumRepository;
 use App\Repositories\JamaahRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -11,11 +14,13 @@ use Illuminate\Support\Facades\Validator;
 class JamaahController extends Controller
 {
 
-    protected $jamaahRepo;
+    protected JamaahRepository $jamaahRepo;
+    protected EnumRepository $enumRepo;
 
-    public function __construct(JamaahRepository $jamaahRepo)
+    public function __construct(JamaahRepository $jamaahRepo, EnumRepository $enumRepo)
     {
         $this->jamaahRepo = $jamaahRepo;
+        $this->enumRepo = $enumRepo;
     }
 
     public function paging()
@@ -35,6 +40,42 @@ class JamaahController extends Controller
         return $this->successRs($data);
     }
 
+    public function findAddFieldsById(Request $request, $id)
+    {
+        $mode = $request->input('mode', 'edit');
+        $query = $this->enumRepo->queryBuilder();
+
+        if ($mode == 'view') {
+            $query->whereHas('customFields.value', function ($query) use ($id) {
+                $query->whereModelId($id);
+            });
+        }
+
+        $query->with('customFields.value', function ($query) use ($id) {
+            $query->whereModelId($id);
+        })->whereGroup('CUSTOM_FIELD_JAMAAH')->orderBy('position');
+
+        $data = EnumResource::collection($query->get(), $mode);
+        return $this->successRs($data);
+    }
+
+    public function setAdditionalField(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'customFieldId' => 'required|exists:custom_fields,id',
+            'value' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
+        }
+
+        $jamaah = Jamaah::findOrFail($id);
+        $result = $jamaah->additionalFields()->create($validator->validated());
+
+        return $this->successRs($result);
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -49,7 +90,8 @@ class JamaahController extends Controller
             return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
         }
 
-        $jamaah = new Jamaah($validator->validated());
+        // $jamaah = new Jamaah($validator->validated());
+        $jamaah = $this->jamaahRepo->queryBuilder()->create($validator->validated());
 
         // Add media
         if ($request->filled('photo')) {
@@ -63,49 +105,61 @@ class JamaahController extends Controller
         return $this->successRs($data);
     }
 
-    public function updatePhoto(Request $request, $id, MediaUploader $mediaUploader)
+    public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'photo' => 'required|file|image',
+            'fullName' => 'required',
+            'nickName' => 'required',
+            'gender' => 'required',
+            'pembinaEnum' => 'required|exists:m_enums,code',
+            'photo' => 'nullable|image'
         ]);
 
         if ($validator->fails()) {
             return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
         }
 
-        $file = $request->file('photo');
-        $folder = 'media/temp/';
+        $jamaah = $this->jamaahRepo->queryBuilder()->whereId($id)->firstOrFail();
+        $jamaah->update($validator->validated());
+        $jamaah->save();
+
+        // Add media
+        if ($request->filled('photo')) {
+            $jamaah->addMediaFromRequest('photo')->toMediaCollection();
+        }
+
+        // Load missing relationship
+        // $jamaah->loadMissing(['']);
+
+        $data = new JamaahResource($jamaah);
+        return $this->successRs($data);
+    }
+
+    public function updatePhoto(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file',
+            'notes' => 'nullable|max:150'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorRs("failed", "Data yang dikirim tidak valid", $validator->errors()->all(), 400);
+        }
+
+        $file = $request->file('file');
+        $collection = Jamaah::MEDIA_TAG_PHOTO;
         $uniqid = uniqid();
-        $mainFileName = $id . '_' . $uniqid . '.' . $file->getClientOriginalExtension();
+        $fileName = $id . '_' . $collection . '_' . $uniqid . '.' . $file->getClientOriginalExtension();
+        $originalFileName = $file->getClientOriginalName();
 
-        $jamaah = Jamaah::withMediaAndVariants(Jamaah::MEDIA_TAG_CLOSEUP)->findOrFail($id);
+        $asset = Jamaah::findOrFail($id);
+        $media = $asset->addMediaFromRequest('file')
+            ->usingName($originalFileName)
+            ->usingFileName($fileName)
+            ->withCustomProperties(['notes' => $request->input('notes')])
+            ->storingConversionsOnDisk('s3')
+            ->toMediaCollection($collection);
 
-        // // Making photo intervention
-        // Image::make($file)
-        //     ->resize(720, null, function ($constraint) {
-        //         $constraint->aspectRatio();
-        //         $constraint->upsize();
-        //     })
-        //     ->save(public_path($folder) . $mainFileName);
-
-        // // Making mediable
-        // $newMedia = $mediaUploader->fromSource(public_path($folder . $mainFileName))->toDirectory('/profile')->upload();
-        // ImageManipulator::createImageVariant($newMedia, Jamaah::MEDIA_TAG_THUMB, true);
-
-        // // Delete old then add new one
-        // $oldMedia = $jamaah->firstMedia(Jamaah::MEDIA_TAG_CLOSEUP);
-        // if ($oldMedia) {
-        //     foreach ($oldMedia->getAllVariants() as $key => $media) {
-        //         $media->delete();
-        //     }
-        //     $oldMedia->delete();
-        // }
-
-        // $jamaah->attachMedia($newMedia, [Jamaah::MEDIA_TAG_CLOSEUP]);
-
-        // // Delete tmp file
-        // unlink(public_path($folder) . $mainFileName);
-
-        return $this->successRs($jamaah->firstMedia([Jamaah::MEDIA_TAG_CLOSEUP]));
+        return new MediaResource($media);
     }
 }

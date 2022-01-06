@@ -44,11 +44,20 @@ class AssetController extends Controller
 
     public function findAddFieldsById(Request $request, $id)
     {
-        $groups = $this->enumRepo->queryBuilder()->with(['customFields.value' => function ($query) use ($id) {
-            $query->whereModelId($id);
-        }])->whereGroup('CUSTOM_FIELD_ASSET')->orderBy('position')->get();
+        $mode = $request->input('mode', 'edit');
+        $query = $this->enumRepo->queryBuilder();
 
-        $data = EnumResource::collection($groups, $request->input('mode'));
+        if ($mode == 'view') {
+            $query->whereHas('customFields.value', function ($query) use ($id) {
+                $query->whereModelId($id);
+            });
+        }
+
+        $query->with('customFields.value', function ($query) use ($id) {
+            $query->whereModelId($id);
+        })->whereGroup('CUSTOM_FIELD_ASSET')->orderBy('position');
+
+        $data = EnumResource::collection($query->get(), $mode);
         return $this->successRs($data);
     }
 

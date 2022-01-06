@@ -61,11 +61,19 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
     $router->delete('additional-field/{id}', 'AdditionalFieldController@destroy');
 
     // jamaah
-    $router->get('jamaah/paging', 'JamaahController@paging');
-    $router->get('jamaah', 'JamaahController@getAll');
-    $router->get('jamaah/{id}', 'JamaahController@findById');
-    $router->post('jamaah', 'JamaahController@store');
-    $router->post('jamaah/{id}/photo', 'JamaahController@updatePhoto');
+    $router->group(['prefix' => 'jamaah'], function () use ($router) {
+        $router->get('', 'JamaahController@getAll');
+        $router->post('', 'JamaahController@store');
+        $router->get('paging', 'JamaahController@paging');
+
+        $router->group(['prefix' => '{id}'], function () use ($router) {
+            $router->get('', 'JamaahController@findById');
+            $router->put('', 'JamaahController@update');
+            $router->post('photo', 'JamaahController@updatePhoto');
+            $router->get('detail', 'JamaahController@findAddFieldsById');
+            $router->post('detail', 'JamaahController@setAdditionalField');
+        });
+    });
 
     // pembina
     $router->group(['prefix' => 'pembina'], function () use ($router) {

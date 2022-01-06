@@ -30,14 +30,14 @@ class JamaahResource extends JsonResource
                 return $this->family->first();
             })),
             'avatar' => $this->avatar?->getTemporaryUrl(Carbon::now()->addMinutes(env('AWS_TEMPORARY_URL_MINUTES', '60'),), Jamaah::MEDIA_TAG_THUMB),
-            'photo' => MediaResource::collection($this->whenLoaded('photos')),
+            'photos' => MediaResource::collection($this->whenLoaded('photos')),
             'families' => FamilyResource::collection($this->whenLoaded('families')),
             'contacts' => ContactResource::collection($this->whenLoaded('contacts')),
-            'details' => JamaahDetailResource::collection($this->whenLoaded('details')),
             'pembina' => new PembinaResource($this->whenLoaded('pembina')),
             'lvPembinaan' => new EnumTypeResource($this->whenLoaded('lvPembinaan')),
             'pembinaan' => new JamaahPembinaanResource($this->whenLoaded('pembinaan')),
             'pembinaanHistories' => JamaahPembinaanResource::collection($this->whenLoaded('pembinaanHistories')),
+            'dapukans' => KepengurusanResource::collection($this->whenLoaded('dapukans'))
         ];
     }
 }

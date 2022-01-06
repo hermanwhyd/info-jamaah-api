@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use \Eloquence\Behaviours\CamelCasing;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Jamaah extends Model
 {
-    use CamelCasing, SoftDeletes;
+    use CamelCasing, SoftDeletes, InteractsWithMedia;
 
-    const MEDIA_TAG_CLOSEUP = 'closeup';
-    const MEDIA_TAG_THUMB = 'thumb';
+    const MEDIA_TAG_PHOTO = 'PHOTO';
+    const MEDIA_TAG_THUMB = 'THUMB';
 
     /**
      * The attributes that are mass assignable.
@@ -67,11 +68,6 @@ class Jamaah extends Model
         return $this->belongsToMany(Family::class, 'family_members')->latest();
     }
 
-    public function details()
-    {
-        return $this->hasMany(JamaahDetail::class);
-    }
-
     public function pembina()
     {
         return $this->belongsTo(Enum::class, 'pembina_enum', 'code')->where('group', 'like', 'PEMBINA_%');
@@ -92,8 +88,39 @@ class Jamaah extends Model
         return $this->hasMany(JamaahPembinaan::class)->orderBy('id');
     }
 
-    public function dapukan()
+    public function dapukans()
     {
         return $this->hasMany(Kepengurusan::class);
+    }
+
+    public function avatar()
+    {
+        return $this->morphOne(config('media-library.media_model'), 'model')->latest();
+    }
+
+    public function photos()
+    {
+        return $this->media()->whereCollectionName(self::MEDIA_TAG_PHOTO)->latest();
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection(self::MEDIA_TAG_PHOTO)
+            ->useDisk('s3')
+            ->onlyKeepLatest(100);
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion(self::MEDIA_TAG_THUMB)
+            ->width(150)
+            ->height(150)
+            ->sharpen(10);
+    }
+
+    public function additionalFields()
+    {
+        return $this->morphMany(AdditionalField::class, 'model');
     }
 }
