@@ -116,7 +116,7 @@ class PembinaController extends Controller
         // If has pengurus, filter where not already in kepengurusan
         if ($request->filled('dapukan_enum')) {
             $dapukanEnum = $request->query('dapukan_enum');
-            $jamaahQ->whereDoesntHave('dapukan', function ($query) use ($dapukanEnum) {
+            $jamaahQ->whereDoesntHave('kepengurusans', function ($query) use ($dapukanEnum) {
                 $query->where('dapukan_enum', $dapukanEnum);
             });
         }

@@ -69,6 +69,7 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
         $router->group(['prefix' => '{id}'], function () use ($router) {
             $router->get('', 'JamaahController@findById');
             $router->put('', 'JamaahController@update');
+            $router->get('pembina', 'JamaahController@getPembina');
             $router->post('photo', 'JamaahController@updatePhoto');
             $router->get('detail', 'JamaahController@findAddFieldsById');
             $router->post('detail', 'JamaahController@setAdditionalField');

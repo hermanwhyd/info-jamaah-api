@@ -37,7 +37,7 @@ class JamaahResource extends JsonResource
             'lvPembinaan' => new EnumTypeResource($this->whenLoaded('lvPembinaan')),
             'pembinaan' => new JamaahPembinaanResource($this->whenLoaded('pembinaan')),
             'pembinaanHistories' => JamaahPembinaanResource::collection($this->whenLoaded('pembinaanHistories')),
-            'dapukans' => KepengurusanResource::collection($this->whenLoaded('dapukans'))
+            'kepengurusans' => KepengurusanResource::collection($this->whenLoaded('kepengurusans'))
         ];
     }
 }

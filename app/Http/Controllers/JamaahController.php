@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\EnumResource;
 use App\Http\Resources\JamaahResource;
+use App\Http\Resources\KepengurusanResource;
 use App\Http\Resources\MediaResource;
 use App\Models\Jamaah;
 use App\Repositories\EnumRepository;
 use App\Repositories\JamaahRepository;
+use App\Repositories\KepengurusanRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,11 +18,13 @@ class JamaahController extends Controller
 
     protected JamaahRepository $jamaahRepo;
     protected EnumRepository $enumRepo;
+    protected KepengurusanRepository $kepengurusanRepo;
 
-    public function __construct(JamaahRepository $jamaahRepo, EnumRepository $enumRepo)
+    public function __construct(JamaahRepository $jamaahRepo, EnumRepository $enumRepo, KepengurusanRepository $kepengurusanRepo)
     {
         $this->jamaahRepo = $jamaahRepo;
         $this->enumRepo = $enumRepo;
+        $this->kepengurusanRepo = $kepengurusanRepo;
     }
 
     public function paging()
@@ -161,5 +165,30 @@ class JamaahController extends Controller
             ->toMediaCollection($collection);
 
         return new MediaResource($media);
+    }
+
+    public function getPembina($id)
+    {
+        $model = Jamaah::whereId($id)->with(['pembina'])->first();
+
+        $data = [
+            'KLP' => [
+                'code' => $model->pembina->code,
+                'label' => $model->pembina->label,
+                'level' => 'Kelompok'
+            ],
+            'DS' => [
+                'code' => 'JPS',
+                'label' => 'Japos',
+                'level' => 'Desa'
+            ],
+            'DA' => [
+                'code' => 'TTM',
+                'label' => 'Tangerang Timur',
+                'level' => 'Daerah'
+            ]
+        ];
+
+        return $this->successRs($data);
     }
 }

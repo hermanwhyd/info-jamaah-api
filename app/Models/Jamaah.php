@@ -88,7 +88,7 @@ class Jamaah extends Model
         return $this->hasMany(JamaahPembinaan::class)->orderBy('id');
     }
 
-    public function dapukans()
+    public function kepengurusans()
     {
         return $this->hasMany(Kepengurusan::class);
     }

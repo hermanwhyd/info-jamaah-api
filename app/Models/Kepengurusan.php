@@ -53,12 +53,12 @@ class Kepengurusan extends Model
 
     public function pembina()
     {
-        return $this->belongsTo(Enum::class, 'pembina_enum', 'code')->where('group', 'like', 'PEMBINA_%');
+        return $this->belongsTo(Enum::class, 'pembina_enum', 'code')->where('group', 'like', 'PEMBINA_%')->orderBy('position');
     }
 
     public function dapukan()
     {
-        return $this->belongsTo(Enum::class, 'dapukan_enum', 'code')->where('group', 'like', 'DAPUKAN_%');
+        return $this->belongsTo(Enum::class, 'dapukan_enum', 'code')->where('group', 'like', 'DAPUKAN_%')->orderBy('position');
     }
 
     public function jamaah()
