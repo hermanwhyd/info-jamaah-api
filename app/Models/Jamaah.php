@@ -22,7 +22,7 @@ class Jamaah extends Model implements HasMedia
      * @var array
      */
     protected $fillable = [
-        'fullName', 'nickName', 'birthDate', 'lvPembinaanEnum'
+        'fullName', 'nickname', 'birthDate', 'lvPembinaanEnum'
     ];
 
     /**

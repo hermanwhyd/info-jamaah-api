@@ -23,7 +23,7 @@ class JamaahResource extends JsonResource
             'fullName' => $this->fullName,
             'nickname' => $this->nickname,
             'birthDate' => DateUtils::toIso8601String($this->birthDate),
-            'gender' => $this->gender == 'M' ? 'Laki-laki' : 'Perempuan',
+            'gender' => $this->gender,
             'pembinaEnum' => $this->pembinaEnum,
             'lvPembinaanEnum' => $this->lvPembinaanEnum,
             'family' => new FamilyResource($this->when($this->relationLoaded('family'), function () {

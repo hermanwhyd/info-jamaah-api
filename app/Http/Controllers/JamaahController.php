@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\EnumResource;
 use App\Http\Resources\JamaahResource;
-use App\Http\Resources\KepengurusanResource;
 use App\Http\Resources\MediaResource;
 use App\Models\Jamaah;
 use App\Repositories\EnumRepository;
@@ -84,7 +83,7 @@ class JamaahController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'fullName' => 'required',
-            'nickName' => 'required',
+            'nickname' => 'required',
             'gender' => 'required',
             'pembinaEnum' => 'required|exists:m_enums,code',
             'photo' => 'nullable|image'
@@ -113,7 +112,7 @@ class JamaahController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'fullName' => 'required',
-            'nickName' => 'required',
+            'nickname' => 'required',
             'gender' => 'required',
             'pembinaEnum' => 'required|exists:m_enums,code',
             'photo' => 'nullable|image'

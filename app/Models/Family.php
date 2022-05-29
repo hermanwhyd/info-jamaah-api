@@ -18,7 +18,7 @@ class Family extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'kepalaKeluargaId', 'residanceId', 'label'
+        'id', 'kepalaKeluargaId', 'pembinaEnum', 'residanceId', 'label'
     ];
 
     /**
@@ -53,4 +53,10 @@ class Family extends Model
     {
         return $this->hasMany(FamilyMember::class)->orderBy('position');
     }
+
+    public function pembina()
+    {
+        return $this->belongsTo(Enum::class, 'pembina_enum', 'code')->where('group', 'like', 'PEMBINA_%')->orderBy('position');
+    }
+
 }

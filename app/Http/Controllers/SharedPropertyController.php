@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\AdditionalFieldResource;
 use App\Http\Resources\EnumResource;
 use App\Http\Resources\EnumTypeResource;
+use App\Http\Resources\JamaahResource;
 use App\Http\Resources\LocationResource;
 use App\Http\Resources\SupplierResource;
 use App\Models\AdditionalField;
 use App\Models\Asset;
 use App\Models\Enum;
 use App\Repositories\EnumRepository;
+use App\Repositories\JamaahRepository;
 use App\Repositories\LocationRepository;
 use App\Repositories\SupplierRepository;
 use Exception;
@@ -25,15 +27,18 @@ class SharedPropertyController extends Controller
     protected EnumRepository $enumRepo;
     protected LocationRepository $locationRepo;
     protected SupplierRepository $supplierRepo;
+    protected JamaahRepository $jamaahRepo;
 
     public function __construct(
         EnumRepository $enumRepo,
         LocationRepository $locationRepo,
-        SupplierRepository $supplierRepo
+        SupplierRepository $supplierRepo,
+        JamaahRepository $jamaahRepo
     ) {
         $this->enumRepo = $enumRepo;
         $this->locationRepo = $locationRepo;
         $this->supplierRepo = $supplierRepo;
+        $this->jamaahRepo = $jamaahRepo;
     }
 
     /**
@@ -124,6 +129,10 @@ class SharedPropertyController extends Controller
         return $this->successRs(null);
     }
 
+    /**
+     * Get selection-option by query-selector
+     * @param $selector a string for identifier
+     */
     public function getOptionBySelector(Request $request, $selector)
     {
         if ($selector === 'location') {
@@ -134,6 +143,11 @@ class SharedPropertyController extends Controller
         if ($selector === 'pembina') {
             $data = $this->enumRepo->queryBuilder()->where('group', 'like', 'PEMBINA_%')->orderBy('position')->get();
             return $this->successRs(EnumTypeResource::collection($data));
+        }
+
+        if ($selector === 'jamaah') {
+            $data = $this->jamaahRepo->queryBuilder()->where('full_name', 'like', '%' . $request->input('name') . '%')->orderBy('full_name', 'asc')->take(10)->get();
+            return $this->successRs(JamaahResource::collection($data));
         }
 
         if ($selector === 'asset-af') {
@@ -165,6 +179,7 @@ class SharedPropertyController extends Controller
             $data = $this->supplierRepo->queryBuilder()->orderBy('title')->get();
             return $this->successRs(SupplierResource::collection($data));
         }
+
 
         return $this->errorRs('failed', `Tidak ada selector ${selector}`, null, 400);
     }

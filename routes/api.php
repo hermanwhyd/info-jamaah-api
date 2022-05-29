@@ -76,6 +76,18 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function ($router) 
         });
     });
 
+    // keluarga
+    $router->group(['prefix' => 'family'], function () use ($router) {
+        $router->get('', 'FamilyController@getAll');
+        $router->post('', 'FamilyController@store');
+        $router->get('paging', 'FamilyController@paging');
+
+        $router->group(['prefix' => '{id}'], function () use ($router) {
+            $router->get('', 'FamilyController@findById');
+            $router->put('', 'FamilyController@update');
+        });
+    });
+
     // pembina
     $router->group(['prefix' => 'pembina'], function () use ($router) {
         $router->get('', 'PembinaController@getAll');

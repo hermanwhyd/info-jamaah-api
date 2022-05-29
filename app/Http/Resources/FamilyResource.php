@@ -19,10 +19,13 @@ class FamilyResource extends JsonResource
             'id' => (int) $this->id,
             'kepalaKeluargaId' => $this->kepalaKeluargaId,
             'label' => $this->label,
+            'pembinaEnum' => $this->pembinaEnum,
             'residanceId' => $this->residanceId,
             'kepalaKeluarga' => new JamaahResource($this->whenLoaded('kepalaKeluarga')),
+            'pembina' => new PembinaResource($this->whenLoaded('pembina')),
             'residance' => new ResidanceResource($this->whenLoaded('residance')),
             'members' => FamilyMemberResource::collection($this->whenLoaded('members')),
+            'membersCount' => $this->when(isset($this->membersCount), $this->membersCount),
         ];
     }
 }

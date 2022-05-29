@@ -10,6 +10,6 @@ class FamilyRepository
     public function queryBuilder()
     {
         return QueryBuilder::for(Family::class)
-            ->allowedIncludes(['familyMembers', 'kepalaKeluarga', 'residance']);
+            ->allowedIncludes(['members.jamaah', 'kepalaKeluarga', 'residance', 'pembina']);
     }
 }
